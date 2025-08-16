@@ -14,6 +14,9 @@ Minimal Kubeflow setup for local development on Mac using k3d.
 # Create k3d cluster
 make cluster
 
+# Install Kubeflow components
+make kubeflow
+
 # Deploy notebook server
 make notebooks
 
@@ -26,6 +29,16 @@ make port-forward
 
 Open http://localhost:8080 in your browser.
 
+## How It Works
+
+This minimal Kubeflow setup includes:
+
+1. **Notebook CRD** - Defines the `Notebook` custom resource
+2. **Notebook Controller** - Manages notebook pods automatically
+3. **Notebook Instance** - Your actual Python notebook
+
+The controller watches for `Notebook` resources and creates the underlying pods, services, and volumes automatically.
+
 ## Cleanup
 
 ```bash
@@ -34,6 +47,5 @@ make delete
 
 ## Repository Structure
 
-- `k8s/cluster/` - Cluster configuration
-- `k8s/notebooks/` - Notebook CRDs
-- `k8s/manifests/` - Future Kubeflow manifests
+- `k8s/manifests/` - Kubeflow CRDs and controllers
+- `k8s/notebooks/` - Notebook instances

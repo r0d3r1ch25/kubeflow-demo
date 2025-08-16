@@ -2,7 +2,7 @@
 CLUSTER_NAME := kubeflow-demo
 NAMESPACE := kubeflow
 
-.PHONY: cluster delete notebooks pods port-forward
+.PHONY: cluster delete kubeflow notebooks pods port-forward
 
 # Create k3d cluster
 cluster:
@@ -17,17 +17,22 @@ delete:
 	@echo "Deleting k3d cluster..."
 	k3d cluster delete $(CLUSTER_NAME)
 
+# Install minimal Kubeflow components
+kubeflow:
+	@echo "Installing Kubeflow components..."
+	kubectl apply -f k8s/manifests/
+
 # Deploy notebook CRD
 notebooks:
 	@echo "Creating namespace and deploying notebook..."
 	kubectl create namespace $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
-	kubectl apply -f k8s/notebooks/notebook.yaml
+	kubectl apply -f k8s/notebooks/
 
 # List all pods in kubeflow namespace
 pods:
 	kubectl get pods -n $(NAMESPACE)
 
-# Port forward kubeflow dashboard
+# Port forward notebook
 port-forward:
 	@echo "Port forwarding to localhost:8080..."
-	kubectl port-forward -n $(NAMESPACE) svc/notebook-python-demo 8080:8888
+	kubectl port-forward -n $(NAMESPACE) svc/python-demo 8080:8888
