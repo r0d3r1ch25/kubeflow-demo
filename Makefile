@@ -2,7 +2,7 @@
 CLUSTER_NAME := kubeflow-demo
 NAMESPACE := kubeflow
 
-.PHONY: cluster delete kubeflow notebooks pods port-forward delete-notebook token
+.PHONY: cluster delete kubeflow notebooks pods delete-notebook token
 
 # Create k3d cluster
 cluster:
@@ -10,7 +10,7 @@ cluster:
 	k3d cluster create $(CLUSTER_NAME) \
 		--agents 1 \
 		--k3s-arg "--disable=traefik@server:0" \
-		--port "8080:80@loadbalancer"
+		--port "8888:8888@loadbalancer"
 
 # Delete k3d cluster
 delete:
@@ -32,16 +32,13 @@ notebooks:
 	@sleep 30
 	@echo "Waiting for notebook pod to be ready..."
 	@kubectl wait --for=condition=ready pod -l notebook-name=python-demo -n $(NAMESPACE) --timeout=300s
-	@echo "Notebook is ready. Use 'make port-forward' and 'make token' to access it."
+	@echo "Notebook is ready. Access it at http://localhost:8888 and use 'make token' for the access token."
 
 # List all pods in kubeflow namespace
 pods:
 	kubectl get pods -n $(NAMESPACE)
 
-# Port forward notebook
-port-forward:
-	@echo "Port forwarding to 0.0.0.0:8888..."
-	@kubectl port-forward --address 0.0.0.0 $(shell kubectl get pods -n kubeflow -l "notebook-name=python-demo" -o jsonpath='{.items[0].metadata.name}') -n $(NAMESPACE) 8888:8888
+
 
 # Get notebook access token
 token:
