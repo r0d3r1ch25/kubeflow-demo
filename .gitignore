@@ -1,0 +1,15 @@
+# Python
+*.pyc
+__pycache__/
+
+# macOS
+.DS_Store
+
+# Environment
+.env
+
+# Logs
+*.log
+
+# Archive
+kubeflow-demo.zip
