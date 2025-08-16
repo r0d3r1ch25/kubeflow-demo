@@ -8,7 +8,7 @@ Minimal Kubeflow setup for local development on Mac using k3d.
 ```bash
 make cluster
 ```
-This creates a k3d cluster named `kubeflow-demo` with port 8080 exposed. Wait for it to complete.
+This creates a k3d cluster named `kubeflow-demo` with port 8888 exposed. Wait for it to complete.
 
 ### Step 2: Install Kubeflow Components
 ```bash
@@ -30,22 +30,16 @@ This command will wait for the notebook pod to be ready.
 
 ### Step 4: Access Your Notebook
 
-1.  **Port-forward to the notebook:**
-    ```bash
-    make port-forward
-    ```
-    This will forward port 8888 on your local machine to the notebook pod. It will bind to `0.0.0.0` so you can access it from other devices on the same network.
-
-2.  **Get the access token:**
+1.  **Get the access token:**
     ```bash
     make token
     ```
     This will print the access token for the Jupyter notebook.
 
-3.  **Access the notebook:**
-    Open `http://<your-ip-address>:8888` in your browser and enter the token.
+2.  **Access the notebook:**
+    Open `http://localhost:8888` in your browser and enter the token.
 
-**Keep the `make port-forward` terminal open** - closing it stops the port forwarding.
+The notebook is directly accessible on port 8888 without port-forwarding.
 
 ## Development
 
@@ -56,7 +50,7 @@ This repository includes a `Makefile` with several useful targets for developmen
 - `make kubeflow`: Install the Kubeflow components.
 - `make notebooks`: Deploy the notebook.
 - `make pods`: List all pods in the `kubeflow` namespace.
-- `make port-forward`: Port-forward to the notebook.
+
 - `make token`: Get the notebook access token.
 - `make delete-notebook`: Delete the notebook.
 
@@ -77,7 +71,41 @@ This removes the entire k3d cluster.
 ## Troubleshooting
 
 - If `make notebooks` times out, check the pod status with `make pods` and the controller logs.
-- If port-forward fails, ensure the pod is `Running` first.
+- If notebook access fails, ensure the pod is `Running` first.
 - If cluster creation fails, delete with `make delete` and retry.
 
 This setup provides a lightweight Kubeflow environment for local development.
+
+## Next Steps
+
+This minimal setup serves as the foundation for building a complete MLOps pipeline. Consider these next steps:
+
+### Pipeline Components
+- **Kubeflow Pipelines**: Add pipeline CRDs and Argo Workflows for orchestrating ML workflows
+- **KFServing/KServe**: Deploy model serving infrastructure for inference endpoints
+- **Katib**: Integrate hyperparameter tuning and AutoML capabilities
+
+### Data Management
+- **MinIO**: Add S3-compatible object storage for datasets and model artifacts
+- **Persistent Volumes**: Replace emptyDir with persistent storage for notebook data
+- **Data Versioning**: Integrate DVC or similar for dataset versioning
+
+### Model Lifecycle
+- **MLflow**: Add experiment tracking and model registry
+- **Model Training Jobs**: Create Kubernetes Jobs/CronJobs for automated training
+- **CI/CD Integration**: Connect with GitHub Actions for automated model deployment
+
+### Monitoring & Observability
+- **Prometheus + Grafana**: Monitor model performance and resource usage
+- **Model Drift Detection**: Implement data/concept drift monitoring
+- **Logging**: Centralized logging with ELK stack or similar
+
+### Security & Governance
+- **RBAC**: Implement role-based access control for different user types
+- **Network Policies**: Secure inter-service communication
+- **Model Governance**: Add model approval workflows and compliance tracking
+
+### Production Readiness
+- **Multi-environment**: Separate dev/staging/prod clusters
+- **GitOps**: Implement ArgoCD for declarative deployments
+- **Backup/Recovery**: Add disaster recovery procedures for critical components
