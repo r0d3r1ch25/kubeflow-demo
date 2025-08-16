@@ -20,6 +20,7 @@ delete:
 # Install minimal Kubeflow components
 kubeflow:
 	@echo "Installing Kubeflow components..."
+	kubectl create namespace $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
 	kubectl apply -f k8s/manifests/
 
 # Deploy notebook CRD
