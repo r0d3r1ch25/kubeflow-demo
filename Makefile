@@ -1,6 +1,7 @@
 # Kubeflow Demo Makefile
 CLUSTER_NAME := kubeflow-demo
 NAMESPACE := kubeflow
+NOTEBOOK_PORT := 8888
 
 .PHONY: cluster delete kubeflow notebooks pods delete-notebook token
 
@@ -9,8 +10,7 @@ cluster:
 	@echo "Creating k3d cluster..."
 	k3d cluster create $(CLUSTER_NAME) \
 		--agents 1 \
-		--k3s-arg "--disable=traefik@server:0" \
-		--port "8888:8888@loadbalancer"
+		--port "0.0.0.0:$(NOTEBOOK_PORT):$(NOTEBOOK_PORT)@loadbalancer"
 
 # Delete k3d cluster
 delete:

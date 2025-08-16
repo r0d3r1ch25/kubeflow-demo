@@ -8,7 +8,7 @@ Minimal Kubeflow setup for local development on Mac using k3d.
 ```bash
 make cluster
 ```
-This creates a k3d cluster named `kubeflow-demo` with port 8888 exposed. Wait for it to complete.
+This creates a k3d cluster named `kubeflow-demo` with port 8888:8888 exposed on 0.0.0.0 (accessible from any IP). Wait for it to complete.
 
 ### Step 2: Install Kubeflow Components
 ```bash
@@ -39,7 +39,7 @@ This command will wait for the notebook pod to be ready.
 2.  **Access the notebook:**
     Open `http://localhost:8888` in your browser and enter the token.
 
-The notebook is directly accessible on port 8888 without port-forwarding.
+The notebook is directly accessible on port 8888:8888 without port-forwarding.
 
 ## Development
 
