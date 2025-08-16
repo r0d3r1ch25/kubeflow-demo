@@ -25,8 +25,24 @@ spec:
                         type: array
                         items:
                           type: object
+                          properties:
+                            name:
+                              type: string
+                            image:
+                              type: string
+                            resources:
+                              type: object
+                            volumeMounts:
+                              type: array
+                              items:
+                                type: object
+                      volumes:
+                        type: array
+                        items:
+                          type: object
           status:
             type: object
+            x-kubernetes-preserve-unknown-fields: true
   scope: Namespaced
   names:
     plural: notebooks
