@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: manager
-        image: kubeflownotebookswg/notebook-controller:v1.7.0
+        image: kubeflownotebookswg/notebook-controller:latest
         command:
         - /manager
         env:
