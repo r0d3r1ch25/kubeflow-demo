@@ -5,7 +5,9 @@ metadata:
   namespace: kubeflow
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
+  ingressClassName: traefik
   rules:
   - http:
       paths:
