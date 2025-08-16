@@ -29,7 +29,7 @@ notebooks:
 	kubectl create namespace $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
 	kubectl apply -f k8s/notebooks/
 	@echo "Waiting for notebook pod to be created..."
-	@sleep 30
+	@until kubectl get pods -l notebook-name=python-demo -n $(NAMESPACE) 2>/dev/null | grep -q python-demo; do sleep 5; done
 	@echo "Waiting for notebook pod to be ready..."
 	@kubectl wait --for=condition=ready pod -l notebook-name=python-demo -n $(NAMESPACE) --timeout=300s
 	@echo "Notebook is ready. Access it at http://localhost:8888 and use 'make token' for the access token."
