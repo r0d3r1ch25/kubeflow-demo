@@ -13,9 +13,10 @@ spec:
       labels:
         app: notebook-controller
     spec:
+      serviceAccountName: notebook-controller
       containers:
       - name: manager
-        image: kubeflownotebookswg/notebook-controller:latest
+        image: kubeflownotebookswg/notebook-controller:v1.10.0-rc.1
         command:
         - /manager
         env:

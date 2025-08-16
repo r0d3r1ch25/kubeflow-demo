@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
       - name: notebook
-        image: jupyter/scipy-notebook:latest
+        image: quay.io/jupyter/scipy-notebook:latest
         resources:
           requests:
             cpu: "1"

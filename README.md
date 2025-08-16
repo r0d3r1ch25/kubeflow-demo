@@ -26,19 +26,39 @@ This creates:
 - The `kubeflow` namespace
 - A `Notebook` resource named `python-demo`
 
-### Step 4: Check if Everything is Running
-```bash
-make pods
-```
-Wait until you see the notebook pod in `Running` status. This may take 1-2 minutes as it downloads the Jupyter image.
+This command will wait for the notebook pod to be ready.
 
-### Step 5: Access Your Notebook
-```bash
-make port-forward
-```
-Open http://localhost:8080 in your browser. You'll see the Jupyter interface.
+### Step 4: Access Your Notebook
 
-**Keep this terminal open** - closing it stops the port forwarding.
+1.  **Port-forward to the notebook:**
+    ```bash
+    make port-forward
+    ```
+    This will forward port 8888 on your local machine to the notebook pod. It will bind to `0.0.0.0` so you can access it from other devices on the same network.
+
+2.  **Get the access token:**
+    ```bash
+    make token
+    ```
+    This will print the access token for the Jupyter notebook.
+
+3.  **Access the notebook:**
+    Open `http://<your-ip-address>:8888` in your browser and enter the token.
+
+**Keep the `make port-forward` terminal open** - closing it stops the port forwarding.
+
+## Development
+
+This repository includes a `Makefile` with several useful targets for development:
+
+- `make cluster`: Create the k3d cluster.
+- `make delete`: Delete the k3d cluster.
+- `make kubeflow`: Install the Kubeflow components.
+- `make notebooks`: Deploy the notebook.
+- `make pods`: List all pods in the `kubeflow` namespace.
+- `make port-forward`: Port-forward to the notebook.
+- `make token`: Get the notebook access token.
+- `make delete-notebook`: Delete the notebook.
 
 ## How Kubeflow Works
 
@@ -56,6 +76,8 @@ This removes the entire k3d cluster.
 
 ## Troubleshooting
 
-- If `make pods` shows `Pending` status, wait longer for image download
-- If port-forward fails, ensure the pod is `Running` first
-- If cluster creation fails, delete with `make delete` and retry
+- If `make notebooks` times out, check the pod status with `make pods` and the controller logs.
+- If port-forward fails, ensure the pod is `Running` first.
+- If cluster creation fails, delete with `make delete` and retry.
+
+This setup provides a lightweight Kubeflow environment for local development.

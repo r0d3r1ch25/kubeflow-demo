@@ -4,8 +4,32 @@ metadata:
   name: notebooks.kubeflow.org
 spec:
   group: kubeflow.org
+  names:
+    kind: Notebook
+    listKind: NotebookList
+    plural: notebooks
+    singular: notebook
+  scope: Namespaced
   versions:
   - name: v1
+    served: true
+    storage: false
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              template:
+                type: object
+                properties:
+                  spec:
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+    subresources:
+      status: {}
+  - name: v1beta1
     served: true
     storage: true
     schema:
@@ -20,31 +44,4 @@ spec:
                 properties:
                   spec:
                     type: object
-                    properties:
-                      containers:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                            image:
-                              type: string
-                            resources:
-                              type: object
-                            volumeMounts:
-                              type: array
-                              items:
-                                type: object
-                      volumes:
-                        type: array
-                        items:
-                          type: object
-          status:
-            type: object
-            x-kubernetes-preserve-unknown-fields: true
-  scope: Namespaced
-  names:
-    plural: notebooks
-    singular: notebook
-    kind: Notebook
+                    x-kubernetes-preserve-unknown-fields: true
