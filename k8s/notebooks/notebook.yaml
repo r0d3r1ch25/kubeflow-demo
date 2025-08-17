@@ -9,6 +9,14 @@ spec:
       containers:
       - name: notebook
         image: quay.io/jupyter/scipy-notebook:latest
+        command:
+        - "jupyter"
+        args:
+        - "lab"
+        - "--ip=0.0.0.0"
+        - "--port=8888"
+        - "--no-browser"
+        - "--allow-root"
         resources:
           requests:
             cpu: "1"
