@@ -58,7 +58,7 @@ This setup provides a complete ML pipeline platform with:
                                  │
                     ┌─────────────────┐
                     │     MySQL       │
-                    │   Metadata      │
+                    │   + ML Metadata │
                     └─────────────────┘
 ```
 
@@ -147,8 +147,8 @@ k8s/
 - 10GB+ free disk space
 
 **Resource Usage:**
-- ~2GB RAM for all components
-- ~5GB disk space for images and data
+- ~2.5GB RAM for all components
+- ~6GB disk space for images and data
 - Minimal CPU usage when idle
 
 ## 🔍 Troubleshooting

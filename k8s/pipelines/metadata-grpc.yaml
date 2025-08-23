@@ -49,7 +49,6 @@ spec:
         - --mysql_config_user=$(MYSQL_CONFIG_USER)
         - --mysql_config_password=$(MYSQL_CONFIG_PASSWORD)
         - --enable_database_upgrade=true
-        - --mysql_config_ssl_options=DISABLED
 ---
 apiVersion: v1
 kind: Service

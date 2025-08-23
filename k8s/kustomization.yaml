@@ -4,11 +4,15 @@ kind: Kustomization
 resources:
 - base/namespace.yaml
 - base/rbac.yaml
-- storage/minio.yaml
-- storage/mysql.yaml
+- storage/minio-secret.yaml
+- storage/deployments/minio-deploy.yaml
+- storage/services/minio-service.yaml
+- storage/deployments/mysql-deploy.yaml
+- storage/services/mysql-service.yaml
 - pipelines/argo-workflow.yaml
 - pipelines/scheduledworkflow-crd.yaml
-- pipelines/ml-pipeline.yaml
+- pipelines/deployments/ml-pipeline-deploy.yaml
+- pipelines/services/ml-pipeline-service.yaml
 - pipelines/ml-pipeline-ui.yaml
 - pipelines/ml-pipeline-visualizationserver.yaml
 - pipelines/metadata-envoy.yaml
