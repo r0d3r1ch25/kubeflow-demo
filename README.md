@@ -67,9 +67,11 @@ This setup provides a complete ML pipeline platform with:
 - **MySQL 8.0** - Pipeline metadata and experiment tracking
 - **MinIO** - Artifact storage (models, datasets, outputs)
 - **Argo Workflows** - Pipeline execution engine
-- **ML Pipeline API** - REST API for pipeline management
-- **ML Pipeline UI** - Web interface for pipeline visualization
+- **ML Pipeline API 2.0** - REST API with v2beta1 support
+- **ML Pipeline UI 2.0** - Web interface for pipeline visualization
 - **Visualization Server** - Pipeline step visualizations
+- **ML Metadata (MLMD)** - Execution tracking and lineage
+- **Metadata Envoy** - Proxy for metadata services
 - **Persistence Agent** - Workflow completion handling
 - **Scheduled Workflow** - Recurring pipeline execution
 - **Jupyter Notebook** - Development and experimentation
@@ -117,9 +119,11 @@ k8s/
 ├── pipelines/
 │   ├── argo-workflow.yaml           # Workflow execution engine
 │   ├── scheduledworkflow-crd.yaml   # Custom resource definitions
-│   ├── ml-pipeline.yaml             # Pipeline API server
-│   ├── ml-pipeline-ui.yaml          # Web interface
+│   ├── ml-pipeline.yaml             # Pipeline API server (v2.0)
+│   ├── ml-pipeline-ui.yaml          # Web interface (v2.0)
 │   ├── ml-pipeline-visualizationserver.yaml  # Visualization service
+│   ├── metadata-envoy.yaml          # ML Metadata proxy
+│   ├── metadata-grpc.yaml           # ML Metadata GRPC server
 │   ├── ml-pipeline-persistenceagent.yaml     # Workflow completion
 │   └── ml-pipeline-scheduledworkflow.yaml    # Recurring pipelines
 ├── notebooks/
@@ -187,7 +191,8 @@ Unlike heavy Kubeflow distributions, this setup:
 
 ## 🤝 Usage
 
-Feel free to fork this repository or clone it for your own ML experiments. This setup is designed to be easily customizable for different use cases.
+Feel free to fork this repository or clone it for your own ML experiments.
+This setup is designed to be easily customizable for different use cases.
 
 ## 📄 License
 
@@ -195,4 +200,4 @@ MIT License - feel free to use this for your projects.
 
 ---
 
-*This setup gets you from zero to running ML pipelines in under 5 minutes. Perfect for exploring Kubeflow capabilities without the operational overhead.*
+*This setup gets you from zero to running ML pipelines in under 10 minutes. Perfect for exploring Kubeflow capabilities without the operational overhead.*

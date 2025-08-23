@@ -12,6 +12,17 @@ spec:
       labels:
         app: metadata-grpc
     spec:
+      initContainers:
+      - name: wait-for-mysql
+        image: mysql:8.0
+        command:
+        - sh
+        - -c
+        - |
+          until mysqladmin ping -h mysql -u root --silent; do
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
       containers:
       - name: container
         image: gcr.io/tfx-oss-public/ml_metadata_store_server:1.14.0
@@ -38,6 +49,7 @@ spec:
         - --mysql_config_user=$(MYSQL_CONFIG_USER)
         - --mysql_config_password=$(MYSQL_CONFIG_PASSWORD)
         - --enable_database_upgrade=true
+        - --mysql_config_ssl_options=DISABLED
 ---
 apiVersion: v1
 kind: Service

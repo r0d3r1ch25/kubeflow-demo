@@ -21,9 +21,9 @@ cluster-up:
 	@echo "Deploying Kubeflow components..."
 	kubectl apply -k k8s/
 	@echo "Waiting for pods to be ready..."
-	kubectl wait --for=condition=ready pod -l app=minio -n kubeflow --timeout=300s
-	kubectl wait --for=condition=ready pod -l app=ml-pipeline -n kubeflow --timeout=300s
-	kubectl wait --for=condition=ready pod -l app=jupyter-notebook -n kubeflow --timeout=300s
+	kubectl wait --for=condition=ready pod -l app=minio -n kubeflow --timeout=600s
+	kubectl wait --for=condition=ready pod -l app=ml-pipeline -n kubeflow --timeout=600s
+	kubectl wait --for=condition=ready pod -l app=jupyter-notebook -n kubeflow --timeout=600s
 	@echo "\n=== Access URLs ==="
 	@echo "Kubeflow Pipelines UI: http://localhost:31380"
 	@echo "MinIO Console: http://localhost:31390 (user: minio, pass: minio123)"
