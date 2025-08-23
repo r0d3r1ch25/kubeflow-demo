@@ -20,3 +20,4 @@ resources:
 - pipelines/ml-pipeline-persistenceagent.yaml
 - pipelines/ml-pipeline-scheduledworkflow.yaml
 - notebooks/jupyter.yaml
+- monitoring/

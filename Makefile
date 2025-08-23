@@ -1,7 +1,7 @@
 # Cluster configuration
 CLUSTER_NAME ?= kubeflow-cluster
 
-.PHONY: cluster-down cluster-up token status again
+.PHONY: cluster-down cluster-up token status
 
 # Delete previous cluster
 cluster-down:
@@ -16,7 +16,8 @@ cluster-up:
 		--k3s-arg "--disable=traefik@server:0" \
 		--port 0.0.0.0:31380:31380 \
 		--port 0.0.0.0:31390:31390 \
-		--port 0.0.0.0:31400:31400
+		--port 0.0.0.0:31400:31400 \
+		--port 0.0.0.0:31410:31410
 	@echo "Cluster created! NodePorts will be used for services."
 	@echo "Deploying Kubeflow components..."
 	kubectl apply -k k8s/
@@ -28,6 +29,7 @@ cluster-up:
 	@echo "Kubeflow Pipelines UI: http://localhost:31380"
 	@echo "MinIO Console: http://localhost:31390 (user: minio, pass: minio123)"
 	@echo "Jupyter Notebook: http://localhost:31400"
+	@echo "Grafana Dashboard: http://localhost:31410 (user: admin, pass: admin)"
 	@echo "\nAll services are ready!"
 
 
@@ -40,12 +42,13 @@ token:
 status:
 	@echo "=== Kubeflow Components Status ==="
 	@kubectl get pods -n kubeflow
+	@echo "\n=== Monitoring Components Status ==="
+	@kubectl get pods -n monitoring
 	@echo "\n=== Services ==="
 	@kubectl get svc -n kubeflow
+	@kubectl get svc -n monitoring
 	@echo "\n=== Access URLs ==="
 	@echo "Kubeflow Pipelines UI: http://localhost:31380"
 	@echo "MinIO Console: http://localhost:31390 (user: minio, pass: minio123)"
 	@echo "Jupyter Notebook: http://localhost:31400"
-
-again:
-	make cluster-down && make cluster-up
+	@echo "Grafana Dashboard: http://localhost:31410 (user: admin, pass: admin)"

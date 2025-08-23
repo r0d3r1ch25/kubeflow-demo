@@ -32,9 +32,15 @@ spec:
         - name: ML_PIPELINE_SERVICE_PORT
           value: "8888"
         - name: MINIO_ACCESS_KEY
-          value: minio
+          valueFrom:
+            secretKeyRef:
+              name: minio-secret
+              key: accesskey
         - name: MINIO_SECRET_KEY
-          value: minio123
+          valueFrom:
+            secretKeyRef:
+              name: minio-secret
+              key: secretkey
         - name: DISABLE_GKE_METADATA
           value: "true"
         - name: ALLOW_CUSTOM_VISUALIZATIONS
