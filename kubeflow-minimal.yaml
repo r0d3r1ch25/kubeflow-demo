@@ -3,51 +3,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: kubeflow
----
-# MySQL
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mysql
-  namespace: kubeflow
-spec:
-  selector:
-    matchLabels:
-      app: mysql
-  template:
-    metadata:
-      labels:
-        app: mysql
-    spec:
-      containers:
-      - name: mysql
-        image: mysql:8.0.34
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: "root"
-        - name: MYSQL_DATABASE
-          value: "mlpipeline"
-        - name: MYSQL_ROOT_HOST
-          value: "0.0.0.0"
-        ports:
-        - containerPort: 3306
-        volumeMounts:
-        - name: mysql-storage
-          mountPath: /var/lib/mysql
-      volumes:
-      - name: mysql-storage
-        emptyDir: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysql
-  namespace: kubeflow
-spec:
-  ports:
-  - port: 3306
-  selector:
-    app: mysql
+
 ---
 # MinIO
 apiVersion: apps/v1
@@ -236,16 +192,10 @@ spec:
       - name: ml-pipeline-api-server
         image: gcr.io/ml-pipeline/api-server:2.0.5
         env:
-        - name: MYSQL_USER
-          value: root
-        - name: MYSQL_PASSWORD
-          value: "root"
-        - name: MYSQL_DATABASE
-          value: mlpipeline
-        - name: MYSQL_HOST
-          value: mysql
-        - name: MYSQL_PORT
-          value: "3306"
+        - name: DB_DRIVER
+          value: sqlite3
+        - name: DB_CONFIG
+          value: /mlpipeline-db.sqlite
         - name: LOG_LEVEL
           value: debug
         - name: OBJECTSTORECONFIG_ACCESSKEY
@@ -265,14 +215,13 @@ spec:
         ports:
         - containerPort: 8888
         - containerPort: 8887
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8888
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
+        volumeMounts:
+        - name: mlpipeline-db-storage
+          mountPath: /mlpipeline-db.sqlite
+          subPath: mlpipeline-db.sqlite
+      volumes:
+      - name: mlpipeline-db-storage
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -394,4 +343,3 @@ spec:
   selector:
     app: minio
   type: NodePort
-
