@@ -35,11 +35,13 @@ That's it! The command will:
 
 ### Access Your Services
 
-Once deployed, access these URLs in your browser:
+Once deployed, access these URLs in your browser (using NodePort services):
 
 - **🔬 Kubeflow Pipelines UI**: http://localhost:31380
 - **📊 MinIO Console**: http://localhost:31390 (user: `minio`, pass: `minio123`)
 - **📓 Jupyter Notebook**: http://localhost:31400 (no password required)
+
+> **Note**: Services are exposed via NodePort on your local machine. The k3d cluster automatically forwards these ports to localhost.
 
 ## 🏗️ Architecture
 
@@ -180,11 +182,12 @@ Unlike heavy Kubeflow distributions, this setup:
 - ✅ **Apple Silicon** - Optimized for M-series Macs
 - ✅ **Modular** - Easy to understand and modify
 - ✅ **Production patterns** - Real MySQL, proper RBAC
-- ✅ **No Istio** - Simplified networking
+- ✅ **No Istio** - Simplified networking with NodePort access
+- ✅ **Init containers** - Proper startup dependencies
 
-## 🤝 Contributing
+## 🤝 Usage
 
-Found an issue or want to improve something? PRs welcome!
+Feel free to fork this repository or clone it for your own ML experiments. This setup is designed to be easily customizable for different use cases.
 
 ## 📄 License
 

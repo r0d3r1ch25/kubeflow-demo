@@ -12,6 +12,17 @@ spec:
       labels:
         app: ml-pipeline-ui
     spec:
+      initContainers:
+      - name: wait-for-ml-pipeline
+        image: curlimages/curl:latest
+        command:
+        - sh
+        - -c
+        - |
+          until curl -f http://ml-pipeline:8888/apis/v1beta1/healthz; do
+            echo "Waiting for ML Pipeline API..."
+            sleep 5
+          done
       containers:
       - name: ml-pipeline-ui
         image: gcr.io/ml-pipeline/frontend:2.0.0
