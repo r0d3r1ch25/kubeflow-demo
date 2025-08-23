@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-grpc
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: metadata-grpc
+  template:
+    metadata:
+      labels:
+        app: metadata-grpc
+    spec:
+      containers:
+      - name: container
+        image: gcr.io/tfx-oss-public/ml_metadata_store_server:1.14.0
+        env:
+        - name: MYSQL_CONFIG_DATABASE
+          value: mlpipeline
+        - name: MYSQL_CONFIG_HOST
+          value: mysql
+        - name: MYSQL_CONFIG_PORT
+          value: "3306"
+        - name: MYSQL_CONFIG_USER
+          value: root
+        - name: MYSQL_CONFIG_PASSWORD
+          value: ""
+        ports:
+        - containerPort: 8080
+        command:
+        - /bin/metadata_store_server
+        args:
+        - --grpc_port=8080
+        - --mysql_config_database=$(MYSQL_CONFIG_DATABASE)
+        - --mysql_config_host=$(MYSQL_CONFIG_HOST)
+        - --mysql_config_port=$(MYSQL_CONFIG_PORT)
+        - --mysql_config_user=$(MYSQL_CONFIG_USER)
+        - --mysql_config_password=$(MYSQL_CONFIG_PASSWORD)
+        - --enable_database_upgrade=true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: metadata-grpc-service
+  namespace: kubeflow
+spec:
+  ports:
+  - port: 8080
+  selector:
+    app: metadata-grpc

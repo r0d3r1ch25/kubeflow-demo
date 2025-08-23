@@ -11,6 +11,8 @@ resources:
 - pipelines/ml-pipeline.yaml
 - pipelines/ml-pipeline-ui.yaml
 - pipelines/ml-pipeline-visualizationserver.yaml
+- pipelines/metadata-envoy.yaml
+- pipelines/metadata-grpc.yaml
 - pipelines/ml-pipeline-persistenceagent.yaml
 - pipelines/ml-pipeline-scheduledworkflow.yaml
 - notebooks/jupyter.yaml

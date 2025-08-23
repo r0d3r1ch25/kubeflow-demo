@@ -58,6 +58,10 @@ spec:
           value: ml-pipeline-visualizationserver
         - name: ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_PORT
           value: "8888"
+        - name: METADATA_GRPC_SERVICE_HOST
+          value: metadata-grpc-service
+        - name: METADATA_GRPC_SERVICE_PORT
+          value: "8080"
         ports:
         - containerPort: 8888
         - containerPort: 8887
