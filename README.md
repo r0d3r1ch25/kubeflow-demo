@@ -9,37 +9,37 @@ Before you begin, ensure you have the following tools installed:
 *   [make](https://www.gnu.org/software/make/)
 *   [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 *   [k3d](https://k3d.io/v5.6.0/#installation)
-*   [kustomize](https://kubernetes-sigs.github.io/kustomize/installation/)
 
 ## Installation
 
 1.  **Create the k3d cluster:**
 
     ```bash
-    make cluster-create
+    make cluster-up
     ```
+    This command creates a k3d cluster with the necessary ports exposed to your local network.
 
-2.  **Install Kubeflow:**
+2.  **Deploy Kubeflow components:**
 
     ```bash
-    make install-kubeflow
+    kubectl apply -f kubeflow-minimal.yaml
     ```
+    This command deploys a minimal set of Kubeflow components and their dependencies.
 
 ## Usage
 
-Once the installation is complete, you can access the Kubeflow dashboard by port-forwarding the istio-ingressgateway service:
+Once the installation is complete, you can access the following services in your browser:
 
-```bash
-kubectl port-forward -n istio-system svc/istio-ingressgateway 8080:80
-```
+*   **Kubeflow Pipeline UI:** [http://localhost:31380](http://localhost:31380)
+*   **MinIO Console:** [http://localhost:31390](http://localhost:31390)
+*   **Jupyter Notebook:** [http://localhost:31400](http://localhost:31400)
 
-Then, open your web browser and navigate to `http://localhost:8080`.
+If you want to access these services from other devices on your local network, replace `localhost` with your machine's local IP address.
 
 ## Cleanup
 
-To delete the k3d cluster and uninstall Kubeflow, run the following commands:
+To delete the k3d cluster, run the following command:
 
 ```bash
-make uninstall-kubeflow
-make cluster-delete
+make cluster-down
 ```
