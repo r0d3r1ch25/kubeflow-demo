@@ -1,7 +1,7 @@
 # Cluster configuration
 CLUSTER_NAME ?= kubeflow-cluster
 
-.PHONY: cluster-down cluster-up
+.PHONY: cluster-down cluster-up token
 
 # Delete previous cluster
 cluster-down:
@@ -19,3 +19,7 @@ cluster-up:
 		--port 0.0.0.0:31400:31400
 	@echo "Cluster created! NodePorts will be used for services."
 
+# Get Jupyter Notebook token
+token:
+	@echo "Fetching Jupyter Notebook token..."
+	@kubectl logs $$(kubectl get pods -n kubeflow -l app=jupyter-notebook -o jsonpath='{.items[0].metadata.name}') -n kubeflow | grep "token=" | sed 's/.*token=//'

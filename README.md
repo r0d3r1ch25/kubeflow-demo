@@ -36,6 +36,22 @@ Once the installation is complete, you can access the following services in your
 
 If you want to access these services from other devices on your local network, replace `localhost` with your machine's local IP address.
 
+## Known Issues and Debugging Status
+
+### ML Pipeline API Server (ml-pipeline) Pod Not Ready
+
+The `ml-pipeline` pod is currently not becoming `READY` (0/1). The logs indicate an "Access denied" error when connecting to the MySQL database, specifically `Error 1045: Access denied for user 'root'@'...' (using password: NO)`.
+
+**Current Status:**
+The `kubeflow-minimal.yaml` has been updated to use `MYSQL_USER` and `MYSQL_PASSWORD` environment variables for the `ml-pipeline` deployment, and `MYSQL_ROOT_HOST: "0.0.0.0"` for the `mysql` deployment. However, the MySQL logs still show `root@localhost is created with an empty password`. This suggests an issue with how the MySQL Docker image initializes the root password when using an `emptyDir` volume.
+
+### Kubeflow Pipeline UI (ml-pipeline-ui) Error
+
+The Kubeflow Pipeline UI (accessible via `http://localhost:31380`) shows an error: "failed to retrieve list of pipelines." This is due to the UI being unable to connect to the `ml-pipeline` API server.
+
+**Current Status:**
+The `ml-pipeline-ui` deployment has been configured with `ML_PIPELINE_SERVICE_HOST: ml-pipeline` and `ML_PIPELINE_SERVICE_PORT: 8888`. The `ml-pipeline-ui` pod logs confirm it is attempting to connect to `ml-pipeline:8888`. The connection is being refused because the `ml-pipeline` API server is not yet ready to serve HTTP traffic on that port (as indicated by the `ml-pipeline` pod's `0/1` readiness status).
+
 ## Cleanup
 
 To delete the k3d cluster, run the following command:
