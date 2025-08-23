@@ -1,0 +1,357 @@
+# Minimal Working Kubeflow for Learning
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubeflow
+---
+# MySQL
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0.34
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "root"
+        - name: MYSQL_DATABASE
+          value: "mlpipeline"
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-storage
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: kubeflow
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+---
+# MinIO
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+      - name: minio
+        image: minio/minio:RELEASE.2024-01-16T16-07-38Z
+        args:
+        - server
+        - /data
+        - --console-address
+        - :9001
+        env:
+        - name: MINIO_ROOT_USER
+          value: "minio"
+        - name: MINIO_ROOT_PASSWORD
+          value: "minio123"
+        ports:
+        - containerPort: 9000
+        - containerPort: 9001
+        volumeMounts:
+        - name: minio-storage
+          mountPath: /data
+      volumes:
+      - name: minio-storage
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-service
+  namespace: kubeflow
+spec:
+  ports:
+  - name: api
+    port: 9000
+  - name: console
+    port: 9001
+  selector:
+    app: minio
+---
+# Service Account with ALL permissions needed
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pipeline-runner
+  namespace: kubeflow
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pipeline-runner
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pipeline-runner
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pipeline-runner
+subjects:
+- kind: ServiceAccount
+  name: pipeline-runner
+  namespace: kubeflow
+---
+# Argo Workflow Controller
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workflow-controller-configmap
+  namespace: kubeflow
+data:
+  config: |
+    instanceID: kubeflow-pipelines
+    artifactRepository:
+      s3:
+        bucket: mlpipeline
+        endpoint: minio-service:9000
+        insecure: true
+        accessKeySecret:
+          name: minio-secret
+          key: accesskey
+        secretKeySecret:
+          name: minio-secret
+          key: secretkey
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-secret
+  namespace: kubeflow
+type: Opaque
+data:
+  accesskey: bWluaW8=  # minio
+  secretkey: bWluaW8xMjM=  # minio123
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workflow-controller
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: workflow-controller
+  template:
+    metadata:
+      labels:
+        app: workflow-controller
+    spec:
+      serviceAccountName: pipeline-runner
+      containers:
+      - name: workflow-controller
+        image: quay.io/argoproj/workflow-controller:v3.4.13
+        command:
+        - workflow-controller
+        args:
+        - --configmap=workflow-controller-configmap
+        - --executor-image=quay.io/argoproj/argoexec:v3.4.13
+        env:
+        - name: NAMESPACE
+          value: kubeflow
+        - name: LEADER_ELECTION_IDENTITY
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+---
+# ML Pipeline API Server
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline
+    spec:
+      serviceAccountName: pipeline-runner
+      containers:
+      - name: ml-pipeline-api-server
+        image: gcr.io/ml-pipeline/api-server:2.0.5
+        env:
+        - name: DBCONFIG_USER
+          value: root
+        - name: DBCONFIG_PASSWORD
+          value: "root"
+        - name: DBCONFIG_DBNAME
+          value: mlpipeline
+        - name: DBCONFIG_HOST
+          value: mysql
+        - name: DBCONFIG_PORT
+          value: "3306"
+        - name: OBJECTSTORECONFIG_ACCESSKEY
+          value: minio
+        - name: OBJECTSTORECONFIG_SECRETACCESSKEY
+          value: minio123
+        - name: OBJECTSTORECONFIG_HOST
+          value: minio-service
+        - name: OBJECTSTORECONFIG_PORT
+          value: "9000"
+        - name: OBJECTSTORECONFIG_SECURE
+          value: "false"
+        - name: OBJECTSTORECONFIG_BUCKETNAME
+          value: mlpipeline
+        - name: DEFAULTPIPELINERUNNERSERVICEACCOUNT
+          value: pipeline-runner
+        ports:
+        - containerPort: 8888
+        - containerPort: 8887
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-pipeline
+  namespace: kubeflow
+spec:
+  ports:
+  - name: grpc
+    port: 8887
+  - name: http
+    port: 8888
+  selector:
+    app: ml-pipeline
+---
+# ML Pipeline UI - Main Access Point
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-ui
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-ui
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline-ui
+    spec:
+      containers:
+      - name: ml-pipeline-ui
+        image: gcr.io/ml-pipeline/frontend:2.0.5
+        env:
+        - name: MINIO_ACCESS_KEY
+          value: minio
+        - name: MINIO_SECRET_KEY
+          value: minio123
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-pipeline-ui
+  namespace: kubeflow
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3000
+    nodePort: 31380  # http://localhost:31380
+  selector:
+    app: ml-pipeline-ui
+  type: NodePort
+---
+# Simple Jupyter Notebook (no complex web app, just direct notebook)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupyter-notebook
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: jupyter-notebook
+  template:
+    metadata:
+      labels:
+        app: jupyter-notebook
+    spec:
+      serviceAccountName: pipeline-runner
+      containers:
+      - name: notebook
+        image: jupyter/scipy-notebook:python-3.10
+        env:
+        - name: JUPYTER_ENABLE_LAB
+          value: "yes"
+        - name: JUPYTER_TOKEN
+          value: ""  # No password for learning
+        ports:
+        - containerPort: 8888
+        volumeMounts:
+        - name: notebook-storage
+          mountPath: /home/jovyan/work
+      volumes:
+      - name: notebook-storage
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter-notebook
+  namespace: kubeflow
+spec:
+  ports:
+  - name: http
+    port: 8888
+    nodePort: 31400  # http://localhost:31400
+  selector:
+    app: jupyter-notebook
+  type: NodePort
+---
+# MinIO Console
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-console
+  namespace: kubeflow
+spec:
+  ports:
+  - name: console
+    port: 9001
+    nodePort: 31390  # http://localhost:31390
+  selector:
+    app: minio
+  type: NodePort
+
