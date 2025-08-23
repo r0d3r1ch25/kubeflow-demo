@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline
+    spec:
+      serviceAccountName: pipeline-runner
+      initContainers:
+      - name: create-bucket
+        image: minio/mc:latest
+        command:
+        - sh
+        - -c
+        - |
+          mc alias set minio http://minio-service:9000 minio minio123
+          mc mb minio/mlpipeline || true
+      containers:
+      - name: ml-pipeline-api-server
+        image: gcr.io/ml-pipeline/api-server:2.0.0
+        env:
+        - name: OBJECTSTORECONFIG_ACCESSKEY
+          value: minio
+        - name: OBJECTSTORECONFIG_SECRETACCESSKEY
+          value: minio123
+        - name: OBJECTSTORECONFIG_HOST
+          value: minio-service
+        - name: OBJECTSTORECONFIG_PORT
+          value: "9000"
+        - name: OBJECTSTORECONFIG_SECURE
+          value: "false"
+        - name: OBJECTSTORECONFIG_BUCKETNAME
+          value: mlpipeline
+        - name: DEFAULTPIPELINERUNNERSERVICEACCOUNT
+          value: pipeline-runner
+        - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
+          value: "true"
+        - name: DBCONFIG_USER
+          value: root
+        - name: DBCONFIG_PASSWORD
+          value: ""
+        - name: DBCONFIG_DBNAME
+          value: mlpipeline
+        - name: DBCONFIG_HOST
+          value: mysql
+        - name: DBCONFIG_PORT
+          value: "3306"
+        - name: DBCONFIG_CONMAXLIFETIME
+          value: 120s
+        - name: ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_HOST
+          value: ml-pipeline-visualizationserver
+        - name: ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_PORT
+          value: "8888"
+        ports:
+        - containerPort: 8888
+        - containerPort: 8887
+        readinessProbe:
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 8888
+          initialDelaySeconds: 90
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 8888
+          initialDelaySeconds: 90
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-pipeline
+  namespace: kubeflow
+spec:
+  ports:
+  - name: grpc
+    port: 8887
+  - name: http
+    port: 8888
+  selector:
+    app: ml-pipeline

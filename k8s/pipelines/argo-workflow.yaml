@@ -1,0 +1,73 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: workflows.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: Workflow
+    listKind: WorkflowList
+    plural: workflows
+    singular: workflow
+    shortNames:
+    - wf
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workflow-controller-configmap
+  namespace: kubeflow
+data:
+  config: |
+    instanceID: kubeflow-pipelines
+    artifactRepository:
+      s3:
+        bucket: mlpipeline
+        endpoint: minio-service:9000
+        insecure: true
+        accessKeySecret:
+          name: minio-secret
+          key: accesskey
+        secretKeySecret:
+          name: minio-secret
+          key: secretkey
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workflow-controller
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: workflow-controller
+  template:
+    metadata:
+      labels:
+        app: workflow-controller
+    spec:
+      serviceAccountName: pipeline-runner
+      containers:
+      - name: workflow-controller
+        image: quay.io/argoproj/workflow-controller:v3.4.13
+        command:
+        - workflow-controller
+        args:
+        - --configmap=workflow-controller-configmap
+        - --executor-image=quay.io/argoproj/argoexec:v3.4.13
+        env:
+        - name: NAMESPACE
+          value: kubeflow
+        - name: LEADER_ELECTION_IDENTITY
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name

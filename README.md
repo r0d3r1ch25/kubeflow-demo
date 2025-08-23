@@ -1,6 +1,6 @@
 # Kubeflow Demo
 
-This repository provides a minimal setup for running Kubeflow on a local k3d cluster.
+This repository provides a minimal setup for running Kubeflow on a local k3d cluster with SQLite backend for learning purposes.
 
 ## Prerequisites
 
@@ -10,52 +10,81 @@ Before you begin, ensure you have the following tools installed:
 *   [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 *   [k3d](https://k3d.io/v5.6.0/#installation)
 
-## Installation
+## Quick Start
 
-1.  **Create the k3d cluster:**
+1.  **Create cluster and deploy Kubeflow:**
 
     ```bash
     make cluster-up
     ```
-    This command creates a k3d cluster with the necessary ports exposed to your local network.
+    This command creates a k3d cluster and automatically deploys all Kubeflow components.
 
-2.  **Deploy Kubeflow components:**
+2.  **Check status:**
 
     ```bash
-    kubectl apply -f kubeflow-minimal.yaml
+    make status
     ```
-    This command deploys a minimal set of Kubeflow components and their dependencies.
 
 ## Usage
 
-Once the installation is complete, you can access the following services in your browser:
+Once the installation is complete, you can access the following services:
 
 *   **Kubeflow Pipeline UI:** [http://localhost:31380](http://localhost:31380)
-*   **MinIO Console:** [http://localhost:31390](http://localhost:31390)
-*   **Jupyter Notebook:** [http://localhost:31400](http://localhost:31400)
+*   **MinIO Console:** [http://localhost:31390](http://localhost:31390) (user: `minio`, pass: `minio123`)
+*   **Jupyter Notebook:** [http://localhost:31400](http://localhost:31400) (no password required)
 
-If you want to access these services from other devices on your local network, replace `localhost` with your machine's local IP address.
+## Architecture
 
-## Known Issues and Debugging Status
+The setup includes:
 
-### ML Pipeline API Server (ml-pipeline) Pod Not Ready
+- **SQLite Database**: Lightweight database for pipeline metadata (no MySQL complexity)
+- **MinIO**: S3-compatible object storage for artifacts
+- **Argo Workflows**: Pipeline execution engine
+- **Kubeflow Pipelines**: ML pipeline management
+- **Jupyter Notebook**: Development environment
 
-The `ml-pipeline` pod is currently not becoming `READY` (0/1). The logs indicate an "Access denied" error when connecting to the MySQL database, specifically `Error 1045: Access denied for user 'root'@'...' (using password: NO)`.
+## Directory Structure
 
-**Current Status:**
-The `kubeflow-minimal.yaml` has been updated to use `MYSQL_USER` and `MYSQL_PASSWORD` environment variables for the `ml-pipeline` deployment, and `MYSQL_ROOT_HOST: "0.0.0.0"` for the `mysql` deployment. However, the MySQL logs still show `root@localhost is created with an empty password`. This suggests an issue with how the MySQL Docker image initializes the root password when using an `emptyDir` volume.
+```
+k8s/
+├── base/
+│   ├── namespace.yaml      # Kubeflow namespace
+│   └── rbac.yaml          # Service accounts and permissions
+├── storage/
+│   └── minio.yaml         # MinIO object storage
+├── pipelines/
+│   ├── argo-workflow.yaml # Argo workflow controller
+│   ├── ml-pipeline.yaml   # Pipeline API server
+│   └── ml-pipeline-ui.yaml # Pipeline UI
+├── notebooks/
+│   └── jupyter.yaml       # Jupyter notebook server
+└── kustomization.yaml     # Kustomize configuration
+```
 
-### Kubeflow Pipeline UI (ml-pipeline-ui) Error
+## Available Commands
 
-The Kubeflow Pipeline UI (accessible via `http://localhost:31380`) shows an error: "failed to retrieve list of pipelines." This is due to the UI being unable to connect to the `ml-pipeline` API server.
-
-**Current Status:**
-The `ml-pipeline-ui` deployment has been configured with `ML_PIPELINE_SERVICE_HOST: ml-pipeline` and `ML_PIPELINE_SERVICE_PORT: 8888`. The `ml-pipeline-ui` pod logs confirm it is attempting to connect to `ml-pipeline:8888`. The connection is being refused because the `ml-pipeline` API server is not yet ready to serve HTTP traffic on that port (as indicated by the `ml-pipeline` pod's `0/1` readiness status).
+- `make cluster-up` - Create cluster and deploy everything
+- `make cluster-down` - Delete the entire cluster
+- `make deploy` - Deploy components to existing cluster
+- `make undeploy` - Remove components but keep cluster
+- `make status` - Check component status
+- `make token` - Get Jupyter notebook token (if needed)
 
 ## Cleanup
 
-To delete the k3d cluster, run the following command:
+To delete the k3d cluster:
 
 ```bash
 make cluster-down
 ```
+
+## Features
+
+- ✅ SQLite backend (no database complexity)
+- ✅ Minimal resource usage
+- ✅ All components in single namespace
+- ✅ External access via NodePorts
+- ✅ Modular Kubernetes manifests
+- ✅ Simple deployment with make commands
+- ✅ No Istio complexity
+- ✅ Perfect for learning Kubeflow Pipelines

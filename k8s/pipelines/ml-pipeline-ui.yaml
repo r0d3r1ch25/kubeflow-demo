@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-ui
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-ui
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline-ui
+    spec:
+      containers:
+      - name: ml-pipeline-ui
+        image: gcr.io/ml-pipeline/frontend:2.0.0
+        env:
+        - name: ML_PIPELINE_SERVICE_HOST
+          value: ml-pipeline
+        - name: ML_PIPELINE_SERVICE_PORT
+          value: "8888"
+        - name: MINIO_ACCESS_KEY
+          value: minio
+        - name: MINIO_SECRET_KEY
+          value: minio123
+        - name: DISABLE_GKE_METADATA
+          value: "true"
+        - name: ALLOW_CUSTOM_VISUALIZATIONS
+          value: "true"
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-pipeline-ui
+  namespace: kubeflow
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3000
+    nodePort: 31380
+  selector:
+    app: ml-pipeline-ui
+  type: NodePort

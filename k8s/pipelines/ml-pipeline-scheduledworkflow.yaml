@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-scheduledworkflow
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-scheduledworkflow
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline-scheduledworkflow
+    spec:
+      serviceAccountName: pipeline-runner
+      containers:
+      - name: ml-pipeline-scheduledworkflow
+        image: gcr.io/ml-pipeline/scheduledworkflow:1.8.5
+        env:
+        - name: NAMESPACE
+          value: kubeflow
+        - name: CRON_SCHEDULE_TIMEZONE
+          value: UTC

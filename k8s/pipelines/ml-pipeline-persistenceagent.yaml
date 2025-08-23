@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-persistenceagent
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-persistenceagent
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline-persistenceagent
+    spec:
+      serviceAccountName: pipeline-runner
+      initContainers:
+      - name: wait-for-visualization-server
+        image: curlimages/curl:latest
+        command:
+        - sh
+        - -c
+        - |
+          until curl -f http://ml-pipeline-visualizationserver:8888; do
+            echo "Waiting for visualization server..."
+            sleep 5
+          done
+      containers:
+      - name: ml-pipeline-persistenceagent
+        image: gcr.io/ml-pipeline/persistenceagent:1.8.5
+        env:
+        - name: NAMESPACE
+          value: kubeflow
+        - name: TTL_SECONDS_AFTER_WORKFLOW_FINISH
+          value: "86400"
+        - name: NUM_WORKERS
+          value: "2"

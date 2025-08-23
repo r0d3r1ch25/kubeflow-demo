@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-visualizationserver
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-visualizationserver
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline-visualizationserver
+    spec:
+      containers:
+      - name: ml-pipeline-visualizationserver
+        image: gcr.io/ml-pipeline/visualization-server:1.8.5
+        ports:
+        - containerPort: 8888
+        env:
+        - name: MINIO_ACCESS_KEY
+          value: minio
+        - name: MINIO_SECRET_KEY
+          value: minio123
+        - name: MINIO_HOST
+          value: minio-service
+        - name: MINIO_PORT
+          value: "9000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-pipeline-visualizationserver
+  namespace: kubeflow
+spec:
+  ports:
+  - port: 8888
+  selector:
+    app: ml-pipeline-visualizationserver
