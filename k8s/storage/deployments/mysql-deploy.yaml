@@ -26,7 +26,11 @@ spec:
         - sh
         - -c
         - |
-          docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password
+          docker-entrypoint.sh mysqld \
+            --authentication-policy=caching_sha2_password \
+            --host-cache-size=0 \
+            --pid-file=/var/lib/mysql/mysqld.pid \
+            --skip-ssl
         ports:
         - containerPort: 3306
         volumeMounts:
@@ -50,4 +54,6 @@ spec:
           periodSeconds: 10
       volumes:
       - name: mysql-storage
-        emptyDir: {}
+        hostPath:
+          path: /k8s_data/kubeflow-cluster/mysql
+          type: DirectoryOrCreate

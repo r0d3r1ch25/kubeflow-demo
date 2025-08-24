@@ -11,5 +11,9 @@ data:
         bucket: mlpipeline
         endpoint: minio-service:9000
         insecure: true
-        accessKey: minio
-        secretKey: minio123
+        accessKeySecret:
+          name: minio-creds
+          key: accesskey
+        secretKeySecret:
+          name: minio-creds
+          key: secretkey

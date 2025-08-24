@@ -21,16 +21,6 @@ cluster-up:
 	@echo "Cluster created! NodePorts will be used for services."
 	@echo "Deploying Kubeflow components..."
 	kubectl apply -k k8s/
-	@echo "Waiting for pods to be ready..."
-	kubectl wait --for=condition=ready pod -l app=minio -n kubeflow --timeout=600s
-	kubectl wait --for=condition=ready pod -l app=ml-pipeline -n kubeflow --timeout=600s
-	kubectl wait --for=condition=ready pod -l app=jupyter-notebook -n kubeflow --timeout=600s
-	@echo "\n=== Access URLs ==="
-	@echo "Kubeflow Pipelines UI: http://localhost:31380"
-	@echo "MinIO Console: http://localhost:31390 (user: minio, pass: minio123)"
-	@echo "Jupyter Notebook: http://localhost:31400"
-	@echo "Grafana Dashboard: http://localhost:31410 (user: admin, pass: admin)"
-	@echo "\nAll services are ready!"
 
 
 # Get Jupyter Notebook token
