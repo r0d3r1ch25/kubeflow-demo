@@ -1,0 +1,84 @@
+# PIPELINE DEFINITION
+# Name: test-pipeline
+# Description: A minimal pipeline with a single component that transforms text.
+# Inputs:
+#    text: str [Default: 'hello kubeflow']
+components:
+  comp-transform-text-component:
+    executorLabel: exec-transform-text-component
+    inputDefinitions:
+      parameters:
+        text:
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        out_text:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+deploymentSpec:
+  executors:
+    exec-transform-text-component:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - transform_text_component
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.14.2'\
+          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"' && \"\
+          $0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef transform_text_component(\n    text: str,\n    out_text: Output[Dataset],\n\
+          \    metrics: Output[Metrics]\n):\n    \"\"\"\n    Minimal component: writes\
+          \ an artifact and logs a metric.\n    No extra packages required; uses only\
+          \ the Python standard library.\n    \"\"\"\n    # pure, deterministic transform\n\
+          \    out = text.upper()\n    n = len(out)\n\n    # write artifact (small\
+          \ .txt file)\n    with open(out_text.path, \"w\", encoding=\"utf-8\") as\
+          \ f:\n        f.write(out)\n\n    # log a numeric metric visible in the\
+          \ KFP UI\n    metrics.log_metric(\"text_length\", float(n))\n\n"
+        image: python:3.10.11
+pipelineInfo:
+  description: A minimal pipeline with a single component that transforms text.
+  name: test-pipeline
+root:
+  dag:
+    tasks:
+      transform-text-component:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-transform-text-component
+        inputs:
+          parameters:
+            text:
+              componentInputParameter: text
+        taskInfo:
+          name: transform-text-component
+  inputDefinitions:
+    parameters:
+      text:
+        defaultValue: hello kubeflow
+        isOptional: true
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.14.2
