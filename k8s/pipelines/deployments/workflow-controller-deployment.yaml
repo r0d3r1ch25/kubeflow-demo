@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workflow-controller
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: workflow-controller
+  template:
+    metadata:
+      labels:
+        app: workflow-controller
+    spec:
+      serviceAccountName: pipeline-runner
+      containers:
+      - name: workflow-controller
+        image: quay.io/argoproj/workflow-controller:v3.4.13
+        command:
+        - workflow-controller
+        args:
+        - --configmap=workflow-controller-configmap
+        - --executor-image=quay.io/argoproj/argoexec:v3.4.13
+        env:
+        - name: NAMESPACE
+          value: kubeflow
+        - name: LEADER_ELECTION_IDENTITY
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name

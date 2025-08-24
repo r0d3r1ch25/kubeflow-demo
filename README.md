@@ -113,55 +113,75 @@ make token
 
 ## 📁 Project Structure
 
+**Perfect Kubernetes Modular Architecture - One Kind Per File**
+
 ```
 k8s/
-├── base/
-│   ├── namespace.yaml      # Kubeflow namespace
-│   └── rbac.yaml          # Service accounts and permissions
-├── storage/
-│   ├── deployments/
-│   │   ├── minio-deploy.yaml    # MinIO with secret references
-│   │   └── mysql-deploy.yaml    # MySQL database
-│   ├── services/
-│   │   ├── minio-service.yaml   # MinIO services
-│   │   └── mysql-service.yaml   # MySQL service
-│   ├── minio-secret.yaml        # Centralized MinIO credentials
-│   ├── minio.yaml              # Combined MinIO resources
-│   └── mysql.yaml              # Combined MySQL resources
-├── pipelines/
-│   ├── deployments/
-│   │   └── ml-pipeline-deploy.yaml      # Pipeline API server
-│   ├── services/
-│   │   └── ml-pipeline-service.yaml     # Pipeline services
-│   ├── argo-workflow.yaml               # Workflow execution engine
-│   ├── scheduledworkflow-crd.yaml       # Custom resource definitions
-│   ├── ml-pipeline.yaml                 # Pipeline API server (v2.0)
-│   ├── ml-pipeline-ui.yaml              # Web interface (v2.0)
-│   ├── ml-pipeline-visualizationserver.yaml  # Visualization service
-│   ├── metadata-envoy.yaml              # ML Metadata proxy
-│   ├── metadata-grpc.yaml               # ML Metadata GRPC server
-│   ├── ml-pipeline-persistenceagent.yaml     # Workflow completion
-│   └── ml-pipeline-scheduledworkflow.yaml    # Recurring pipelines
-├── notebooks/
-│   └── jupyter.yaml       # Jupyter notebook server
-├── monitoring/
-│   ├── namespace.yaml     # Monitoring namespace
-│   ├── loki/
-│   │   ├── deployment.yaml    # Loki log aggregation
-│   │   ├── service.yaml       # Loki service
-│   │   └── kustomization.yaml
-│   ├── promtail/
-│   │   ├── configmap.yaml     # Promtail config for Kubeflow logs
-│   │   ├── daemonset.yaml     # Promtail log collector
-│   │   ├── rbac.yaml          # Promtail permissions
-│   │   └── kustomization.yaml
-│   ├── grafana/
-│   │   ├── configmap.yaml     # Grafana datasource (Loki)
-│   │   ├── deployment.yaml    # Grafana dashboard
-│   │   ├── service.yaml       # Grafana NodePort (31410)
-│   │   └── kustomization.yaml
-│   └── kustomization.yaml     # Monitoring stack
-└── kustomization.yaml     # Main Kustomize configuration
+├── base/                            # Core Kubeflow foundation
+│   ├── rbac/                        # RBAC resources (one per file)
+│   │   ├── pipeline-runner-serviceaccount.yaml
+│   │   ├── pipeline-runner-clusterrole.yaml
+│   │   └── pipeline-runner-clusterrolebinding.yaml
+│   ├── kustomization.yaml           # Base module configuration
+│   └── namespace.yaml               # Kubeflow namespace
+├── storage/                         # Data persistence layer
+│   ├── deployments/                 # All deployment resources
+│   │   ├── minio-deploy.yaml        # MinIO object storage
+│   │   └── mysql-deploy.yaml        # MySQL metadata database
+│   ├── services/                    # All service resources
+│   │   ├── minio-service.yaml       # MinIO API service
+│   │   ├── minio-console-service.yaml # MinIO console (NodePort 31390)
+│   │   └── mysql-service.yaml       # MySQL service
+│   ├── secrets/                     # All secret resources
+│   │   └── minio-secret.yaml        # Centralized MinIO credentials
+│   └── kustomization.yaml           # Storage module configuration
+├── pipelines/                       # ML Pipeline orchestration
+│   ├── crds/                        # Custom Resource Definitions
+│   │   ├── workflows-crd.yaml       # Argo Workflows CRD
+│   │   └── scheduledworkflow-crd.yaml # Scheduled Workflow CRD
+│   ├── configmaps/                  # All ConfigMap resources
+│   │   └── workflow-controller-configmap.yaml
+│   ├── deployments/                 # All deployment resources
+│   │   ├── ml-pipeline-deploy.yaml  # Pipeline API server
+│   │   ├── ml-pipeline-ui-deployment.yaml # Web interface
+│   │   ├── ml-pipeline-visualizationserver-deployment.yaml
+│   │   ├── ml-pipeline-persistenceagent-deployment.yaml
+│   │   ├── ml-pipeline-scheduledworkflow-deployment.yaml
+│   │   ├── metadata-grpc-deployment.yaml # ML Metadata GRPC
+│   │   ├── metadata-envoy-deployment.yaml # ML Metadata proxy
+│   │   └── workflow-controller-deployment.yaml # Argo controller
+│   ├── services/                    # All service resources
+│   │   ├── ml-pipeline-service.yaml # Pipeline API service
+│   │   ├── ml-pipeline-ui-service.yaml # UI service (NodePort 31380)
+│   │   ├── ml-pipeline-visualizationserver-service.yaml
+│   │   ├── metadata-grpc-service.yaml
+│   │   └── metadata-envoy-service.yaml
+│   └── kustomization.yaml           # Pipelines module configuration
+├── notebooks/                       # Interactive development environment
+│   ├── deployments/                 # All deployment resources
+│   │   └── jupyter-deployment.yaml  # Jupyter notebook server
+│   ├── services/                    # All service resources
+│   │   └── jupyter-service.yaml     # Jupyter service (NodePort 31400)
+│   └── kustomization.yaml           # Notebooks module configuration
+├── monitoring/                      # Observability and logging stack
+│   ├── deployments/                 # All deployment resources
+│   │   ├── loki-deployment.yaml     # Log aggregation system
+│   │   └── grafana-deployment.yaml  # Dashboard and visualization
+│   ├── services/                    # All service resources
+│   │   ├── loki-service.yaml        # Loki service
+│   │   └── grafana-service.yaml     # Grafana service (NodePort 31410)
+│   ├── configmaps/                  # All ConfigMap resources
+│   │   ├── grafana-configmap.yaml   # Grafana datasource (Loki)
+│   │   └── promtail-configmap.yaml  # Promtail config for Kubeflow logs
+│   ├── daemonsets/                  # All DaemonSet resources
+│   │   └── promtail-daemonset.yaml  # Log collection agent
+│   ├── rbac/                        # RBAC resources (one per file)
+│   │   ├── promtail-serviceaccount.yaml
+│   │   ├── promtail-clusterrole.yaml
+│   │   └── promtail-clusterrolebinding.yaml
+│   ├── namespace.yaml               # Monitoring namespace
+│   └── kustomization.yaml           # Monitoring module configuration
+└── kustomization.yaml               # Main modular configuration
 ```
 
 ## 🔐 Security Features
@@ -237,12 +257,16 @@ Unlike heavy Kubeflow distributions, this setup:
 - ✅ **Fast startup** - Ready in minutes, not hours
 - ✅ **Local-first** - No cloud dependencies
 - ✅ **Apple Silicon** - Optimized for M-series Macs
-- ✅ **Modular** - Easy to understand and modify
+- ✅ **Modular** - Professional Kubernetes structure with proper separation of concerns
 - ✅ **Production patterns** - Real MySQL, proper RBAC, secret management
 - ✅ **No Istio** - Simplified networking with NodePort access
 - ✅ **Integrated Monitoring** - Built-in log aggregation and visualization
 - ✅ **Security-focused** - Centralized credential management
 - ✅ **Latest MinIO** - Recent 2024 release for better performance
+- ✅ **No Duplicates** - Single deployment per service, optimized resource usage
+- ✅ **Perfect Kubernetes Structure** - One Kind per YAML file, properly organized by resource type
+- ✅ **Zero Mixed Files** - Each YAML contains exactly one Kubernetes resource
+- ✅ **Enterprise-Ready** - Follows GitOps and Kubernetes best practices for production
 
 ## 🤝 Usage
 

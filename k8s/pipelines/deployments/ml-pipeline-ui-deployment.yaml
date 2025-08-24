@@ -47,18 +47,3 @@ spec:
           value: "true"
         ports:
         - containerPort: 3000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ml-pipeline-ui
-  namespace: kubeflow
-spec:
-  ports:
-  - name: http
-    port: 80
-    targetPort: 3000
-    nodePort: 31380
-  selector:
-    app: ml-pipeline-ui
-  type: NodePort

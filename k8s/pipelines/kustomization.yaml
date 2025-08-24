@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - crds/workflows-crd.yaml
+  - crds/scheduledworkflow-crd.yaml
+  - configmaps/workflow-controller-configmap.yaml
+  - deployments/ml-pipeline-deploy.yaml
+  - deployments/ml-pipeline-ui-deployment.yaml
+  - deployments/ml-pipeline-visualizationserver-deployment.yaml
+  - deployments/metadata-grpc-deployment.yaml
+  - deployments/metadata-envoy-deployment.yaml
+  - deployments/workflow-controller-deployment.yaml
+  - deployments/ml-pipeline-persistenceagent-deployment.yaml
+  - deployments/ml-pipeline-scheduledworkflow-deployment.yaml
+  - services/ml-pipeline-service.yaml
+  - services/ml-pipeline-ui-service.yaml
+  - services/ml-pipeline-visualizationserver-service.yaml
+  - services/metadata-grpc-service.yaml
+  - services/metadata-envoy-service.yaml
