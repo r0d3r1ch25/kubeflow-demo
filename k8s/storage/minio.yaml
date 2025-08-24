@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: minio
-        image: minio/minio:RELEASE.2024-01-16T16-07-38Z
+        image: minio/minio:RELEASE.2025-08-21T23-45-12Z
         args:
         - server
         - /data
