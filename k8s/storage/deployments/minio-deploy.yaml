@@ -33,4 +33,6 @@ spec:
           mountPath: /data
       volumes:
       - name: minio-storage
-        emptyDir: {}
+        hostPath:
+          path: ~/data/kubeflow-cluster/minio
+          type: DirectoryOrCreate

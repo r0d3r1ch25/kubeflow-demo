@@ -20,6 +20,9 @@ All running locally with minimal resource usage, tested on Apple Silicon (M-seri
 ```bash
 # Install required tools (macOS)
 brew install make kubectl k3d kustomize
+
+# Create data directory for persistent storage
+mkdir -p ~/data/kubeflow-cluster
 ```
 
 ### One-Command Deploy
@@ -191,6 +194,14 @@ k8s/
 - **Hardcoded Credentials** - MinIO uses minio/minio123 for simplicity and reliability
 
 
+## 💾 Persistent Storage
+
+Your data is automatically saved to:
+- **Notebooks**: `~/data/kubeflow-cluster/notebooks/`
+- **MinIO artifacts**: `~/data/kubeflow-cluster/minio/`
+
+Data persists across pod restarts and cluster recreation.
+
 ## 💡 Use Cases
 
 - **ML Experimentation** - Rapid prototyping of ML workflows
@@ -199,6 +210,7 @@ k8s/
 - **Education** - Learn Kubeflow concepts without cloud complexity
 - **CI/CD Testing** - Validate pipelines before production deployment
 - **Resource Optimization** - Test pipeline resource requirements
+- **Data Persistence** - Keep notebooks and artifacts across pod restarts
 
 ## 🖥️ System Requirements
 

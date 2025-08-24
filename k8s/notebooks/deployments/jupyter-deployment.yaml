@@ -28,4 +28,6 @@ spec:
           mountPath: /home/jovyan/work
       volumes:
       - name: notebook-storage
-        emptyDir: {}
+        hostPath:
+          path: ~/data/kubeflow-cluster/notebooks
+          type: DirectoryOrCreate
