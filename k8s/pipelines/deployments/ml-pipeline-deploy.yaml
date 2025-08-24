@@ -20,22 +20,16 @@ spec:
         - sh
         - -c
         - |
-          mc alias set minio http://minio-service:9000 $(echo bWluaW8= | base64 -d) $(echo bWluaW8xMjM= | base64 -d)
+          mc alias set minio http://minio-service:9000 minio minio123
           mc mb minio/mlpipeline || true
       containers:
       - name: ml-pipeline-api-server
         image: gcr.io/ml-pipeline/api-server:2.0.0
         env:
         - name: OBJECTSTORECONFIG_ACCESSKEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-secret
-              key: accesskey
+          value: minio
         - name: OBJECTSTORECONFIG_SECRETACCESSKEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-secret
-              key: secretkey
+          value: minio123
         - name: OBJECTSTORECONFIG_HOST
           value: minio-service
         - name: OBJECTSTORECONFIG_PORT

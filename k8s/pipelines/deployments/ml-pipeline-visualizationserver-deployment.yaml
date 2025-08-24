@@ -19,15 +19,9 @@ spec:
         - containerPort: 8888
         env:
         - name: MINIO_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-secret
-              key: accesskey
+          value: minio
         - name: MINIO_SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: minio-secret
-              key: secretkey
+          value: minio123
         - name: MINIO_HOST
           value: minio-service
         - name: MINIO_PORT

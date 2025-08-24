@@ -22,15 +22,9 @@ spec:
         - :9001
         env:
         - name: MINIO_ROOT_USER
-          valueFrom:
-            secretKeyRef:
-              name: minio-secret
-              key: accesskey
+          value: "minio"
         - name: MINIO_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: minio-secret
-              key: secretkey
+          value: "minio123"
         ports:
         - containerPort: 9000
         - containerPort: 9001

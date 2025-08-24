@@ -69,7 +69,7 @@ This setup provides a complete ML pipeline platform with integrated monitoring:
 ### Core Components
 
 - **MySQL 8.0** - Pipeline metadata and experiment tracking
-- **MinIO ** - Artifact storage with secret-based authentication
+- **MinIO (2024 Release)** - Artifact storage with hardcoded credentials
 - **Argo Workflows** - Pipeline execution engine
 - **ML Pipeline API 2.0** - REST API with v2beta1 support
 - **ML Pipeline UI 2.0** - Web interface for pipeline visualization
@@ -132,8 +132,7 @@ k8s/
 │   │   ├── minio-service.yaml       # MinIO API service
 │   │   ├── minio-console-service.yaml # MinIO console (NodePort 31390)
 │   │   └── mysql-service.yaml       # MySQL service
-│   ├── secrets/                     # All secret resources
-│   │   └── minio-secret.yaml        # Centralized MinIO credentials
+
 │   └── kustomization.yaml           # Storage module configuration
 ├── pipelines/                       # ML Pipeline orchestration
 │   ├── crds/                        # Custom Resource Definitions
@@ -186,10 +185,10 @@ k8s/
 
 ## 🔐 Security Features
 
-- **Secret-based Authentication** - All MinIO credentials reference centralized secrets
+- **Simple Authentication** - Hardcoded MinIO credentials for reliable connectivity
 - **RBAC** - Proper service accounts and role-based access control
 - **Namespace Isolation** - Separate namespaces for Kubeflow and monitoring
-- **No Hardcoded Passwords** - Credentials managed through Kubernetes secrets
+- **Hardcoded Credentials** - MinIO uses minio/minio123 for simplicity and reliability
 
 
 ## 💡 Use Cases
