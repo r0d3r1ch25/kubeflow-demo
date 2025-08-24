@@ -268,10 +268,9 @@ Unlike heavy Kubeflow distributions, this setup:
 - ✅ **Local-first** - No cloud dependencies
 - ✅ **Apple Silicon** - Optimized for M-series Macs
 - ✅ **Modular** - Professional Kubernetes structure with proper separation of concerns
-- ✅ **Production patterns** - Real MySQL, proper RBAC, secret management
+- ✅ **Production patterns** - Real MySQL, proper RBAC
 - ✅ **No Istio** - Simplified networking with NodePort access
 - ✅ **Integrated Monitoring** - Built-in log aggregation and visualization
-- ✅ **Security-focused** - Centralized credential management
 - ✅ **Latest MinIO** - Recent 2024 release for better performance
 - ✅ **No Duplicates** - Single deployment per service, optimized resource usage
 - ✅ **Perfect Kubernetes Structure** - One Kind per YAML file, properly organized by resource type

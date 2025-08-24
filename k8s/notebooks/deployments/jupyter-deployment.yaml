@@ -29,5 +29,5 @@ spec:
       volumes:
       - name: notebook-storage
         hostPath:
-          path: ~/data/kubeflow-cluster/notebooks
+          path: /opt/k8s_data/kf-cluster/notebooks
           type: DirectoryOrCreate

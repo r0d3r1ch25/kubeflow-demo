@@ -34,5 +34,5 @@ spec:
       volumes:
       - name: minio-storage
         hostPath:
-          path: ~/data/kubeflow-cluster/minio
+          path: /opt/k8s_data/kf-cluster/minio
           type: DirectoryOrCreate
