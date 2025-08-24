@@ -6,7 +6,7 @@ A minimal, production-ready Kubeflow Pipelines deployment running on k3d for loc
 
 - **Kubeflow Pipelines** - Complete ML workflow orchestration
 - **Jupyter Notebooks** - Interactive development environment  
-- **MinIO** - S3-compatible artifact storage (latest 2024 release)
+- **MinIO** - S3-compatible artifact storage
 - **MySQL** - Pipeline metadata storage
 - **Argo Workflows** - Robust pipeline execution engine
 - **Monitoring Stack** - Promtail + Loki + Grafana for log aggregation and visualization
@@ -19,7 +19,7 @@ All running locally with minimal resource usage, tested on Apple Silicon (M-seri
 
 ```bash
 # Install required tools (macOS)
-brew install make kubectl k3d
+brew install make kubectl k3d kustomize
 ```
 
 ### One-Command Deploy
@@ -69,7 +69,7 @@ This setup provides a complete ML pipeline platform with integrated monitoring:
 ### Core Components
 
 - **MySQL 8.0** - Pipeline metadata and experiment tracking
-- **MinIO (2024 Release)** - Artifact storage with secret-based authentication
+- **MinIO ** - Artifact storage with secret-based authentication
 - **Argo Workflows** - Pipeline execution engine
 - **ML Pipeline API 2.0** - REST API with v2beta1 support
 - **ML Pipeline UI 2.0** - Web interface for pipeline visualization
@@ -191,7 +191,6 @@ k8s/
 - **Namespace Isolation** - Separate namespaces for Kubeflow and monitoring
 - **No Hardcoded Passwords** - Credentials managed through Kubernetes secrets
 
-To change MinIO passwords, update only the base64 values in `k8s/storage/minio-secret.yaml`.
 
 ## 💡 Use Cases
 
