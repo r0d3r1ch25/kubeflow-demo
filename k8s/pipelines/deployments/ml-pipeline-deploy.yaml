@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ml-pipeline
+  name: ml-pipeline-api-server
   namespace: kubeflow
 spec:
   selector:
     matchLabels:
-      app: ml-pipeline
+      app: ml-pipeline-api-server
   template:
     metadata:
       labels:
-        app: ml-pipeline
+        app: ml-pipeline-api-server
     spec:
       serviceAccountName: pipeline-runner
       initContainers:

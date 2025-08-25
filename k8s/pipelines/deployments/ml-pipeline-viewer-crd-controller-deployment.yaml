@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-viewer-crd-controller
+  namespace: kubeflow
+spec:
+  selector:
+    matchLabels:
+      app: ml-pipeline-viewer-crd-controller
+  template:
+    metadata:
+      labels:
+        app: ml-pipeline-viewer-crd-controller
+    spec:
+      serviceAccountName: pipeline-runner
+      containers:
+      - name: ml-pipeline-viewer-crd-controller
+        image: gcr.io/ml-pipeline/viewer-crd-controller:2.0.0
+        env:
+        - name: MAX_NUM_VIEWERS
+          value: "50"
