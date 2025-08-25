@@ -23,4 +23,5 @@ resources:
 - deployments/ml-pipeline-scheduledworkflow-deployment.yaml
 - deployments/metadata-writer-deployment.yaml
 - deployments/ml-pipeline-viewer-crd-controller-deployment.yaml
-- deployments/ml-pipeline-cache-deployment.yaml
+- rbac/argo-workflow-rbac.yaml
+- rbac/workflow-executor-rbac.yaml
