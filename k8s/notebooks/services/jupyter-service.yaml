@@ -10,4 +10,4 @@ spec:
     nodePort: 31400
   selector:
     app: jupyter-notebook
-  type: NodePort
+  type: ClusterIP

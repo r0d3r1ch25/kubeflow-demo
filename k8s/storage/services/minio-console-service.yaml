@@ -10,4 +10,4 @@ spec:
     nodePort: 31390
   selector:
     app: minio
-  type: NodePort
+  type: ClusterIP

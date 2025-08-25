@@ -39,5 +39,9 @@ spec:
           value: "true"
         - name: ALLOW_CUSTOM_VISUALIZATIONS
           value: "true"
+        - name: ML_PIPELINE_SERVICE_HOST_V2
+          value: ml-pipeline
+        - name: ML_PIPELINE_SERVICE_PORT_V2
+          value: "8888"
         ports:
         - containerPort: 3000

@@ -69,8 +69,8 @@ spec:
           httpGet:
             path: /apis/v1beta1/healthz
             port: 8888
-          initialDelaySeconds: 90
-          periodSeconds: 10
+          initialDelaySeconds: 30
+          periodSeconds: 5
         livenessProbe:
           httpGet:
             path: /apis/v1beta1/healthz
