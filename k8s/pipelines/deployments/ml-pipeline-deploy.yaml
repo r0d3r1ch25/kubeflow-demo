@@ -62,6 +62,12 @@ spec:
           value: metadata-grpc-service
         - name: METADATA_GRPC_SERVICE_PORT
           value: "8080"
+        readinessProbe:
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 8888
+          initialDelaySeconds: 60
+          periodSeconds: 10
         ports:
         - containerPort: 8888
         - containerPort: 8887
