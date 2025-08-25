@@ -13,15 +13,7 @@ spec:
         app: ml-pipeline-api-server
     spec:
       serviceAccountName: pipeline-runner
-      initContainers:
-      - name: create-bucket
-        image: minio/mc:RELEASE.2024-01-16T16-06-34Z
-        command:
-        - sh
-        - -c
-        - |
-          mc alias set minio http://minio-service:9000 minio minio123
-          mc mb minio/mlpipeline || true
+      
       containers:
       - name: ml-pipeline-api-server
         image: gcr.io/ml-pipeline/api-server:2.0.0
@@ -43,7 +35,7 @@ spec:
         - name: AUTO_UPDATE_PIPELINE_DEFAULT_VERSION
           value: "true"
         - name: DBCONFIG_USER
-          value: root
+          value: mlpipeline
         - name: DBCONFIG_PASSWORD
           value: ""
         - name: DBCONFIG_DBNAME

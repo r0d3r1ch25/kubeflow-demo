@@ -12,17 +12,7 @@ spec:
       labels:
         app: metadata-grpc
     spec:
-      initContainers:
-      - name: wait-for-mysql
-        image: mysql:8.0.35
-        command:
-        - sh
-        - -c
-        - |
-          until mysqladmin ping -h mysql -u root --silent; do
-            echo "Waiting for MySQL..."
-            sleep 5
-          done
+      
       containers:
       - name: container
         image: gcr.io/tfx-oss-public/ml_metadata_store_server:1.14.0
@@ -34,7 +24,7 @@ spec:
         - name: MYSQL_CONFIG_PORT
           value: "3306"
         - name: MYSQL_CONFIG_USER
-          value: root
+          value: mlpipeline
         - name: MYSQL_CONFIG_PASSWORD
           value: ""
         ports:

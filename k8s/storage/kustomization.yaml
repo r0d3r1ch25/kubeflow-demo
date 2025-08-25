@@ -7,3 +7,4 @@ resources:
 - services/minio-console-service.yaml
 - deployments/mysql-deploy.yaml
 - services/mysql-service.yaml
+- mysql-init-configmap.yaml

@@ -22,6 +22,11 @@ spec:
           value: mlpipeline
         - name: MYSQL_ROOT_PASSWORD
           value: ""
+        - name: MYSQL_INIT_SCRIPT
+          value: |
+            CREATE USER IF NOT EXISTS 'mlpipeline'@'%' IDENTIFIED WITH mysql_native_password BY '';
+            GRANT ALL PRIVILEGES ON mlpipeline.* TO 'mlpipeline'@'%';
+            FLUSH PRIVILEGES;
 
 
         ports:
@@ -29,24 +34,15 @@ spec:
         volumeMounts:
         - name: mysql-storage
           mountPath: /var/lib/mysql
-        readinessProbe:
-          exec:
-            command:
-            - sh
-            - -c
-            - "mysqladmin ping -u root"
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        livenessProbe:
-          exec:
-            command:
-            - sh
-            - -c
-            - "mysqladmin ping -u root"
-          initialDelaySeconds: 30
-          periodSeconds: 10
+        - name: mysql-init
+          mountPath: /docker-entrypoint-initdb.d
+          readOnly: true
+        
       volumes:
       - name: mysql-storage
         hostPath:
           path: /opt/k8s_data/kf-cluster/mysql
           type: DirectoryOrCreate
+      - name: mysql-init
+        configMap:
+          name: mysql-init-script

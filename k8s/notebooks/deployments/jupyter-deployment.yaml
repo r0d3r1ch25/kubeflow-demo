@@ -13,13 +13,7 @@ spec:
         app: jupyter-notebook
     spec:
       serviceAccountName: pipeline-runner
-      initContainers:
-      - name: fix-permissions
-        image: busybox
-        command: ['sh', '-c', 'chown -R 1000:100 /home/jovyan && chmod -R 755 /home/jovyan']
-        volumeMounts:
-        - name: notebook-storage
-          mountPath: /home/jovyan
+      
       containers:
       - name: notebook
         image: jupyter/scipy-notebook:python-3.10
