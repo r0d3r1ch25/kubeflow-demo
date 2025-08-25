@@ -35,11 +35,7 @@ status:
 	@echo "\n=== Services ==="
 	@kubectl get svc -n kubeflow
 	@kubectl get svc -n monitoring
-	@echo "\n=== Access URLs (after running 'make forward') ==="
-	@echo "Kubeflow Pipelines UI: http://localhost:8080"
-	@echo "MinIO Console: http://localhost:9001 (user: minio, pass: minio123)"
-	@echo "Jupyter Notebook: http://localhost:8889"
-	@echo "Grafana Dashboard: http://localhost:3001 (user: admin, pass: admin)"
+
 
 # Start port-forwarding for all services
 forward:
