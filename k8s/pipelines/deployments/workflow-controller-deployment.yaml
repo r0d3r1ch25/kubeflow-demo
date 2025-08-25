@@ -32,3 +32,5 @@ spec:
               fieldPath: metadata.name
         - name: POD_NAMESPACE
           value: kubeflow
+        - name: WORKFLOW_CONTROLLER_INSTANCE_ID
+          value: kubeflow-pipelines

@@ -5,8 +5,8 @@ import kfp
 def main(host: str, pipeline_path: str) -> None:
     client = kfp.Client(host=host)
     experiment = client.create_experiment("demo")
-    run = client.run_pipeline(experiment.id, "test-run", pipeline_path)
-    print("Started run:", run.id)
+    run = client.run_pipeline(experiment.experiment_id, "test-run", pipeline_path)
+    print("Started run:", run.run_id)
 
 
 if __name__ == "__main__":

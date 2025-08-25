@@ -16,7 +16,7 @@ spec:
       
       containers:
       - name: ml-pipeline-persistenceagent
-        image: gcr.io/ml-pipeline/persistenceagent:1.8.5
+        image: gcr.io/ml-pipeline/persistenceagent:2.0.0
         env:
         - name: NAMESPACE
           value: kubeflow
