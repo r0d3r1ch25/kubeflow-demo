@@ -10,4 +10,4 @@ spec:
   - name: http
     port: 8888
   selector:
-    app: ml-pipeline
+    app: ml-pipeline-api-server

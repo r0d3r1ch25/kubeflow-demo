@@ -24,4 +24,3 @@ resources:
 - deployments/metadata-writer-deployment.yaml
 - deployments/ml-pipeline-viewer-crd-controller-deployment.yaml
 - deployments/ml-pipeline-cache-deployment.yaml
-- webhook-certs-secret.yaml
