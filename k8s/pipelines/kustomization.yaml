@@ -6,6 +6,7 @@ resources:
 - argo-crds.yaml
 - crds/workflows-crd.yaml
 - crds/scheduledworkflow-crd.yaml
+- crds/viewer-crd.yaml
 - configmaps/workflow-controller-configmap.yaml
 - deployments/workflow-controller-deployment.yaml
 - deployments/ml-pipeline-deploy.yaml
@@ -20,3 +21,4 @@ resources:
 - services/metadata-grpc-service.yaml
 - deployments/ml-pipeline-persistenceagent-deployment.yaml
 - deployments/ml-pipeline-scheduledworkflow-deployment.yaml
+- deployments/metadata-writer-deployment.yaml
