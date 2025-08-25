@@ -1,0 +1,3 @@
+kfp==2.14.2
+kubernetes
+minio

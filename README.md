@@ -18,7 +18,6 @@ This is a local development setup for Kubeflow Pipelines with Jupyter notebooks.
 
 ### Known Issues
 - 🔧 MySQL shows deprecation warnings (functional but noisy)
-- ❌ **Pipeline run creation fails**: UI tries to proxy to `localhost:8080/apis/v2beta1/runs` instead of internal service `ml-pipeline:8888`. This is a fundamental routing issue in the Kubeflow UI configuration that needs further investigation.
 - 🔧 Some components still stabilizing
 
 ## Quick Start
@@ -34,13 +33,31 @@ make status
 make forward
 ```
 
+Install the Python dependencies used by the example pipeline:
+
+```bash
+pip install -r requirements.txt
+```
+
+### Submit the sample pipeline
+
+After port-forwarding is running, you can upload and execute the example pipeline with:
+
+```bash
+python run_pipeline.py
+```
+
+The script uses the Kubeflow Pipelines API on `localhost:8888` to create a run from
+`test_pipeline.yaml`.
+
 ## Access URLs
 
 After running `make forward`:
 
 - **Kubeflow Pipelines UI**: http://localhost:8080
 - **Jupyter Notebook**: http://localhost:8889 (token required - use `make token`)
-- **Kubeflow Pipelines API**: http://localhost:8888 (direct API access)
+- **Kubeflow Pipelines API**: http://localhost:8888 (REST) / http://localhost:8887 (gRPC)
+- **MinIO S3 API**: http://localhost:9000
 - **MinIO Console**: http://localhost:9001 (user: minio, pass: minio123)
 - **Grafana Dashboard**: http://localhost:3001 (user: admin, pass: admin)
 
@@ -53,10 +70,10 @@ After running `make forward`:
 
 ## Persistent Data
 
-Data is stored locally in:
-- Jupyter notebooks: `/opt/k8s_data/kf-cluster/notebooks/`
-- MinIO data: `/opt/k8s_data/kf-cluster/minio/`
-- MySQL data: `/opt/k8s_data/kf-cluster/mysql/`
+Data is stored locally in the `data/` directory created at cluster startup:
+- Jupyter notebooks: `data/notebooks/`
+- MinIO data: `data/minio/`
+- MySQL data: `data/mysql/`
 
 ## Development Notes
 

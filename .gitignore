@@ -13,3 +13,6 @@ __pycache__/
 
 # Archive
 kubeflow-demo.zip
+
+# Local data volumes
+data/
