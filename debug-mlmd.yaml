@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug-mlmd
+  namespace: kubeflow
+spec:
+  containers:
+  - name: debug
+    image: python:3.9-slim
+    command: ['sleep', '3600']
+    env:
+    - name: METADATA_GRPC_SERVICE_HOST
+      value: metadata-grpc-service
+    - name: METADATA_GRPC_SERVICE_PORT
+      value: "8080"
+  restartPolicy: Never
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: debug-script
+  namespace: kubeflow
+data:
+  test_mlmd.py: |
+    import grpc
+    import os
+    from ml_metadata.proto import metadata_store_pb2
+    from ml_metadata.proto import metadata_store_service_pb2_grpc
+    
+    def test_mlmd_connection():
+        host = os.getenv('METADATA_GRPC_SERVICE_HOST', 'metadata-grpc-service')
+        port = os.getenv('METADATA_GRPC_SERVICE_PORT', '8080')
+        
+        channel = grpc.insecure_channel(f'{host}:{port}')
+        stub = metadata_store_service_pb2_grpc.MetadataStoreServiceStub(channel)
+        
+        try:
+            request = metadata_store_pb2.GetContextsByTypeRequest()
+            request.type_name = "system.PipelineRun"
+            response = stub.GetContextsByType(request)
+            print(f"Found {len(response.contexts)} PipelineRun contexts")
+            for ctx in response.contexts:
+                print(f"Context: {ctx.name}, ID: {ctx.id}")
+        except Exception as e:
+            print(f"Error: {e}")
+    
+    if __name__ == "__main__":
+        test_mlmd_connection()
+  install_deps.sh: |
+    #!/bin/bash
+    pip install ml-metadata grpcio

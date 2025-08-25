@@ -13,7 +13,13 @@ spec:
         app: ml-pipeline-api-server
     spec:
       serviceAccountName: pipeline-runner
-      
+      initContainers:
+      - name: wait-for-mysql
+        image: busybox:1.35
+        command: ['sh', '-c', 'until nc -z mysql 3306; do echo waiting for mysql; sleep 2; done;']
+      - name: wait-for-metadata-grpc
+        image: busybox:1.35
+        command: ['sh', '-c', 'until nc -z metadata-grpc-service 8080; do echo waiting for metadata-grpc; sleep 2; done;']
       containers:
       - name: ml-pipeline-api-server
         image: gcr.io/ml-pipeline/api-server:2.0.0

@@ -21,3 +21,5 @@ spec:
           value: kubeflow
         - name: CRON_SCHEDULE_TIMEZONE
           value: UTC
+        - name: POD_NAMESPACE
+          value: kubeflow

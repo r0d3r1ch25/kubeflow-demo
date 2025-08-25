@@ -24,3 +24,5 @@ spec:
           value: "86400"
         - name: NUM_WORKERS
           value: "2"
+        - name: POD_NAMESPACE
+          value: kubeflow

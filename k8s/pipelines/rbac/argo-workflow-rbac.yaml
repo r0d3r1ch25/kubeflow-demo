@@ -49,6 +49,8 @@ rules:
   - workflowtasksets
   - workflowtasksets/finalizers
   - workflowartifactgctasks
+  - workflowtaskresults
+  - workflowartifactgctasks/finalizers
   verbs:
   - get
   - list
@@ -89,6 +91,16 @@ rules:
   verbs:
   - create
   - get
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+  - get
+  - update
+  - patch
   - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1

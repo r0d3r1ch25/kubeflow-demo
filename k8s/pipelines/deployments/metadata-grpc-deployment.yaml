@@ -12,7 +12,10 @@ spec:
       labels:
         app: metadata-grpc
     spec:
-      
+      initContainers:
+      - name: wait-for-mysql
+        image: busybox:1.35
+        command: ['sh', '-c', 'until nc -z mysql 3306; do echo waiting for mysql; sleep 2; done;']
       containers:
       - name: container
         image: gcr.io/tfx-oss-public/ml_metadata_store_server:1.14.0
