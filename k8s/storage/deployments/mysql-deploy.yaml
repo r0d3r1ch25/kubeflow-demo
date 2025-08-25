@@ -22,14 +22,8 @@ spec:
           value: mlpipeline
         - name: MYSQL_ROOT_PASSWORD
           value: ""
-        - name: MYSQL_INIT_COMMAND
-          value: "SET GLOBAL host_cache_size=0;"
-        args:
-        - --authentication-policy=caching_sha2_password
-        - --pid-file=/var/lib/mysql/mysqld.pid
-        - --skip-ssl
-        - --mysqlx=OFF
-        - --init-command=SET GLOBAL host_cache_size=0
+
+
         ports:
         - containerPort: 3306
         volumeMounts:

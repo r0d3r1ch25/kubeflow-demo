@@ -7,7 +7,7 @@ spec:
   ports:
   - name: http
     port: 8888
-    nodePort: 31400
+
   selector:
     app: jupyter-notebook
   type: ClusterIP

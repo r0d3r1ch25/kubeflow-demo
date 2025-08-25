@@ -7,7 +7,7 @@ spec:
   ports:
   - name: console
     port: 9001
-    nodePort: 31390
+
   selector:
     app: minio
   type: ClusterIP

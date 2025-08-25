@@ -12,7 +12,7 @@ cluster-down:
 cluster-up:
 	@echo "Creating k3d cluster $(CLUSTER_NAME)..."
 	k3d cluster create $(CLUSTER_NAME) \
-		--agents 1 \
+		--agents 0 \
 		--k3s-arg "--disable=traefik@server:0"
 	@echo "Cluster created! Using port-forwarding for services."
 	@echo "Deploying Kubeflow components..."
@@ -39,16 +39,16 @@ status:
 	@echo "Kubeflow Pipelines UI: http://localhost:8080"
 	@echo "MinIO Console: http://localhost:9001 (user: minio, pass: minio123)"
 	@echo "Jupyter Notebook: http://localhost:8888"
-	@echo "Grafana Dashboard: http://localhost:3000 (user: admin, pass: admin)"
+	@echo "Grafana Dashboard: http://localhost:3001 (user: admin, pass: admin)"
 
 # Start port-forwarding for all services
 forward:
 	@echo "Starting port-forwarding for all services..."
 	@echo "Press Ctrl+C to stop all port-forwards"
 	@kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80 &
-	@kubectl port-forward -n kubeflow svc/minio-console-service 9001:9001 &
-	@kubectl port-forward -n kubeflow svc/jupyter-service 8888:80 &
-	@kubectl port-forward -n monitoring svc/grafana-service 3000:3000 &
+	@kubectl port-forward -n kubeflow svc/minio-console 9001:9001 &
+	@kubectl port-forward -n kubeflow svc/jupyter-notebook 8888:8888 &
+	@kubectl port-forward -n monitoring svc/grafana 3001:3000 &
 	@wait
 
 # Stop all port-forwarding
