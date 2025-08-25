@@ -45,11 +45,11 @@ status:
 forward:
 	@echo "Starting port-forwarding for all services..."
 	@echo "Press Ctrl+C to stop all port-forwards"
-	@kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80 &
-	@kubectl port-forward -n kubeflow svc/ml-pipeline 8888:8888 &
-	@kubectl port-forward -n kubeflow svc/minio-console 9001:9001 &
-	@kubectl port-forward -n kubeflow svc/jupyter-notebook 8889:8888 &
-	@kubectl port-forward -n monitoring svc/grafana 3001:3000 &
+	@kubectl port-forward --address 0.0.0.0 -n kubeflow svc/ml-pipeline-ui 8080:80 &
+	@kubectl port-forward --address 0.0.0.0 -n kubeflow svc/ml-pipeline 8888:8888 &
+	@kubectl port-forward --address 0.0.0.0 -n kubeflow svc/minio-console 9001:9001 &
+	@kubectl port-forward --address 0.0.0.0 -n kubeflow svc/jupyter-notebook 8889:8888 &
+	@kubectl port-forward --address 0.0.0.0 -n monitoring svc/grafana 3001:3000 &
 	@wait
 
 # Stop all port-forwarding
