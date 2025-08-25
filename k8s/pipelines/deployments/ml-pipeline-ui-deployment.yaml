@@ -43,5 +43,7 @@ spec:
           value: ml-pipeline
         - name: ML_PIPELINE_SERVICE_PORT_V2
           value: "8888"
+        - name: ML_PIPELINE_SERVICE_URL
+          value: "http://ml-pipeline:8888"
         ports:
         - containerPort: 3000

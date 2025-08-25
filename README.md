@@ -18,7 +18,7 @@ This is a local development setup for Kubeflow Pipelines with Jupyter notebooks.
 
 ### Known Issues
 - 🔧 MySQL shows deprecation warnings (functional but noisy)
-- 🔧 Pipeline creation may have intermittent proxy issues
+- ❌ **Pipeline run creation fails**: UI tries to proxy to `localhost:8080/apis/v2beta1/runs` instead of internal service `ml-pipeline:8888`. This is a fundamental routing issue in the Kubeflow UI configuration that needs further investigation.
 - 🔧 Some components still stabilizing
 
 ## Quick Start
@@ -39,7 +39,8 @@ make forward
 After running `make forward`:
 
 - **Kubeflow Pipelines UI**: http://localhost:8080
-- **Jupyter Notebook**: http://localhost:8888 (no token required)
+- **Jupyter Notebook**: http://localhost:8889 (token required - use `make token`)
+- **Kubeflow Pipelines API**: http://localhost:8888 (direct API access)
 - **MinIO Console**: http://localhost:9001 (user: minio, pass: minio123)
 - **Grafana Dashboard**: http://localhost:3001 (user: admin, pass: admin)
 

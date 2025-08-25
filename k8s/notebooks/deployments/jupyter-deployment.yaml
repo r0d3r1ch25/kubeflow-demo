@@ -26,8 +26,7 @@ spec:
         env:
         - name: JUPYTER_ENABLE_LAB
           value: "yes"
-        - name: JUPYTER_TOKEN
-          value: ""
+
         ports:
         - containerPort: 8888
         volumeMounts:

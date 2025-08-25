@@ -24,7 +24,7 @@ cluster-up:
 # Get Jupyter Notebook token
 token:
 	@echo "Fetching Jupyter Notebook token..."
-	@kubectl logs $$(kubectl get pods -n kubeflow -l app=jupyter-notebook -o jsonpath='{.items[0].metadata.name}') -n kubeflow 2>/dev/null | grep "token=" | sed 's/.*token=//' || echo "No token required (passwordless setup)"
+	@kubectl logs $$(kubectl get pods -n kubeflow -l app=jupyter-notebook -o jsonpath='{.items[0].metadata.name}') -c notebook -n kubeflow 2>/dev/null | grep "token=" | tail -1 | sed 's/.*token=//' || echo "Token not found in logs"
 
 # Check status of all components
 status:
@@ -38,7 +38,7 @@ status:
 	@echo "\n=== Access URLs (after running 'make forward') ==="
 	@echo "Kubeflow Pipelines UI: http://localhost:8080"
 	@echo "MinIO Console: http://localhost:9001 (user: minio, pass: minio123)"
-	@echo "Jupyter Notebook: http://localhost:8888"
+	@echo "Jupyter Notebook: http://localhost:8889"
 	@echo "Grafana Dashboard: http://localhost:3001 (user: admin, pass: admin)"
 
 # Start port-forwarding for all services
@@ -46,8 +46,9 @@ forward:
 	@echo "Starting port-forwarding for all services..."
 	@echo "Press Ctrl+C to stop all port-forwards"
 	@kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80 &
+	@kubectl port-forward -n kubeflow svc/ml-pipeline 8888:8888 &
 	@kubectl port-forward -n kubeflow svc/minio-console 9001:9001 &
-	@kubectl port-forward -n kubeflow svc/jupyter-notebook 8888:8888 &
+	@kubectl port-forward -n kubeflow svc/jupyter-notebook 8889:8888 &
 	@kubectl port-forward -n monitoring svc/grafana 3001:3000 &
 	@wait
 
