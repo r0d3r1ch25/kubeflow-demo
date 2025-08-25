@@ -21,6 +21,8 @@ spec:
         args:
         - --configmap=workflow-controller-configmap
         - --executor-image=quay.io/argoproj/argoexec:v3.4.13
+        - --loglevel=debug
+        - --namespaced
         env:
         - name: NAMESPACE
           value: kubeflow

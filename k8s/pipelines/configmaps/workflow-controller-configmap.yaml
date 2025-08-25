@@ -6,6 +6,13 @@ metadata:
 data:
   config: |
     instanceID: kubeflow-pipelines
+    namespace: kubeflow
+    parallelism: 10
+    executor:
+      imagePullPolicy: IfNotPresent
+    workflowDefaults:
+      spec:
+        serviceAccountName: pipeline-runner
     artifactRepository:
       s3:
         bucket: mlpipeline

@@ -51,6 +51,8 @@ rules:
   - workflowartifactgctasks
   - workflowtaskresults
   - workflowartifactgctasks/finalizers
+  - cronworkflows
+  - cronworkflows/finalizers
   verbs:
   - get
   - list

@@ -7,6 +7,7 @@ resources:
 - crds/workflows-crd.yaml
 - crds/scheduledworkflow-crd.yaml
 - crds/viewer-crd.yaml
+- crds/missing-argo-crds.yaml
 - configmaps/workflow-controller-configmap.yaml
 - deployments/workflow-controller-deployment.yaml
 - deployments/ml-pipeline-deploy.yaml
