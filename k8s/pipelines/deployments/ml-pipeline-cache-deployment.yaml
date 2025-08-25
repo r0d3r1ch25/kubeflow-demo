@@ -1,26 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cache-server
+  name: ml-pipeline-cache
   namespace: kubeflow
 spec:
   selector:
     matchLabels:
-      app: cache-server
+      app: ml-pipeline-cache
   template:
     metadata:
       labels:
-        app: cache-server
+        app: ml-pipeline-cache
     spec:
       serviceAccountName: pipeline-runner
       containers:
-      - name: server
+      - name: cache
         image: gcr.io/ml-pipeline/cache-server:2.0.0
         env:
         - name: CACHE_IMAGE
           value: gcr.io/ml-pipeline/cache-deployer:2.0.0
-        - name: CACHE_NODE_RESTRICTIONS
-          value: "false"
         - name: NAMESPACE_TO_WATCH
           value: kubeflow
         ports:
