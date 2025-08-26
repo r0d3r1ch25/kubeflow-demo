@@ -14,18 +14,13 @@
 3. **Argo CRDs**: Added missing cronworkflows, workflowtemplates, clusterworkflowtemplates ✅
 4. **RBAC**: Complete permissions including leases for leader election ✅
 5. **Init containers**: Proper startup order dependencies ✅
+6. **Workflow auto-labeling**: Added default label in controller ConfigMap ✅
 
 ## Current Status
 - ✅ **Workflows execute properly** when instance ID label is present
 - ✅ **Persistenceagent works** - no more RPC errors
 - ✅ **MLMD contexts created** - workflows process successfully
-- ❌ **Auto-labeling not working** - `WORKFLOW_CONTROLLER_INSTANCE_ID` env var doesn't auto-add labels
-
-## Workaround Required
-New workflows need manual instance ID label:
-```bash
-kubectl patch workflow <workflow-name> -n kubeflow --type='merge' -p='{"metadata":{"labels":{"workflows.argoproj.io/controller-instanceid":"kubeflow-pipelines"}}}'
-```
+- ✅ **Auto-labeling working** - controller config defaults add instance ID label
 
 ## Files Modified
 - `k8s/pipelines/deployments/ml-pipeline-persistenceagent-deployment.yaml` - Version 2.0.0
@@ -33,6 +28,7 @@ kubectl patch workflow <workflow-name> -n kubeflow --type='merge' -p='{"metadata
 - `k8s/pipelines/deployments/ml-pipeline-deploy.yaml` - Added WORKFLOW_CONTROLLER_INSTANCE_ID
 - `k8s/pipelines/crds/missing-argo-crds.yaml` - Complete Argo CRDs
 - `k8s/pipelines/rbac/argo-workflow-rbac.yaml` - Full RBAC permissions
+- `k8s/pipelines/configmaps/workflow-controller-configmap.yaml` - Default instance ID label
 
 ## Status: ✅ MOSTLY RESOLVED
 Core MLMD functionality works - workflows execute and create contexts when properly labeled.
