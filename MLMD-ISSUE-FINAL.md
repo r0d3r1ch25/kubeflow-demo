@@ -9,7 +9,7 @@
 3. **Incomplete Argo Setup**: Missing CRDs and RBAC permissions
 
 ## Solutions Applied
-1. **persistenceagent**: Updated to version 2.0.0 ✅
+1. **persistenceagent**: Updated to version 2.0.0 and set `WORKFLOW_CONTROLLER_INSTANCE_ID` for auto-labeling ✅
 2. **workflow-controller**: Added `--namespaced` flag ✅
 3. **Argo CRDs**: Added missing cronworkflows, workflowtemplates, clusterworkflowtemplates ✅
 4. **RBAC**: Complete permissions including leases for leader election ✅
@@ -20,10 +20,12 @@
 - ✅ **Workflows execute properly** when instance ID label is present
 - ✅ **Persistenceagent works** - no more RPC errors
 - ✅ **MLMD contexts created** - workflows process successfully
-- ✅ **Auto-labeling working** - controller config defaults add instance ID label
+
+  - ✅ **Auto-labeling working** - persistence agent and controller config add instance ID label
+  - ✅ **Auto-labeling working** - controller config defaults add instance ID label
 
 ## Files Modified
-- `k8s/pipelines/deployments/ml-pipeline-persistenceagent-deployment.yaml` - Version 2.0.0
+- `k8s/pipelines/deployments/ml-pipeline-persistenceagent-deployment.yaml` - Version 2.0.0 and WORKFLOW_CONTROLLER_INSTANCE_ID
 - `k8s/pipelines/deployments/workflow-controller-deployment.yaml` - Added --namespaced
 - `k8s/pipelines/deployments/ml-pipeline-deploy.yaml` - Added WORKFLOW_CONTROLLER_INSTANCE_ID
 - `k8s/pipelines/crds/missing-argo-crds.yaml` - Complete Argo CRDs
