@@ -26,3 +26,5 @@ spec:
           value: "2"
         - name: POD_NAMESPACE
           value: kubeflow
+        - name: WORKFLOW_CONTROLLER_INSTANCE_ID
+          value: kubeflow-pipelines
