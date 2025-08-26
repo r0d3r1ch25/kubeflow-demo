@@ -11,6 +11,9 @@ data:
     executor:
       imagePullPolicy: IfNotPresent
     workflowDefaults:
+      metadata:
+        labels:
+          workflows.argoproj.io/controller-instanceid: kubeflow-pipelines
       spec:
         serviceAccountName: pipeline-runner
     artifactRepository:
