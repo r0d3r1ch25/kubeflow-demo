@@ -20,7 +20,9 @@
 - ✅ **Workflows execute properly** when instance ID label is present
 - ✅ **Persistenceagent works** - no more RPC errors
 - ✅ **MLMD contexts created** - workflows process successfully
-- ✅ **Auto-labeling working** - persistence agent and controller config add instance ID label
+
+  - ✅ **Auto-labeling working** - persistence agent and controller config add instance ID label
+  - ✅ **Auto-labeling working** - controller config defaults add instance ID label
 
 ## Files Modified
 - `k8s/pipelines/deployments/ml-pipeline-persistenceagent-deployment.yaml` - Version 2.0.0 and WORKFLOW_CONTROLLER_INSTANCE_ID
